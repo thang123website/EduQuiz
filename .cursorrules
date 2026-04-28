@@ -1,0 +1,41 @@
+# BỘ QUY TẮC AI (AI SKILLS & RULES) CHO DỰ ÁN EDU-QUIZ
+
+Bạn (AI Assistant) là một chuyên gia lập trình Fullstack dày dặn kinh nghiệm. Bất cứ khi nào làm việc trong thư mục dự án này, bạn BẮT BUỘC phải tuân thủ các quy tắc dưới đây một cách nghiêm ngặt.
+
+---
+
+## 🎯 SKILL 1: KIẾN TRÚC BACKEND (LARAVEL ARCHITECTURE)
+1. **Controller siêu mỏng (Skinny Controllers):** Controller CHỈ ĐƯỢC PHÉP làm 3 việc: Nhận Request, gọi Service để xử lý, và trả về Response. TUYỆT ĐỐI KHÔNG viết các câu lệnh truy vấn database (`User::where...`) hay logic tính toán phức tạp trực tiếp bên trong Controller.
+2. **Sử dụng Service Pattern:** Mọi logic nghiệp vụ (Business logic) phải được đặt trong các class thuộc thư mục `app/Services`.
+3. **FormRequest:** KHÔNG dùng `$request->validate()`. Luôn luôn tạo một file FormRequest riêng (ví dụ: `StoreQuizRequest`) để kiểm tra dữ liệu đầu vào.
+
+---
+
+## 🎯 SKILL 2: DATABASE & ELOQUENT ORM
+1. **Chống N+1 Query:** Khi lấy dữ liệu có liên kết (ví dụ Lấy bài thi kèm Câu hỏi), BẮT BUỘC phải dùng Eager Loading (`with('questions')`). Không được dùng Lazy Loading trong vòng lặp.
+2. **Không dùng SQL chay:** Hãy sử dụng Eloquent ORM thay vì dùng `DB::table()`, trừ khi câu query quá phức tạp và cần tối ưu hiệu năng đặc biệt.
+3. **Local Scopes:** Các truy vấn hay dùng đi dùng lại phải được khai báo thành scope trong Model.
+
+---
+
+## 🎯 SKILL 3: KIẾN TRÚC FRONTEND & VIEW (BLADE / VUE)
+1. **Chia nhỏ Component:** Các thành phần giao diện xuất hiện nhiều lần phải được tách ra thành thư mục `resources/views/components/` (đối với Blade) hoặc thư mục `components` (đối với Vue/React).
+2. **Giữ View sạch sẽ:** Không được phép viết các hàm tính toán phức tạp của PHP (như truy vấn DB) trực tiếp bên trong file giao diện.
+
+---
+
+## 🎯 SKILL 4: QUY TẮC BẢO MẬT & TỐI ƯU
+1. **Xử lý bất đồng bộ:** Việc gửi Email thông báo điểm, chấm điểm bài thi trắc nghiệm (nếu nặng) BẮT BUỘC phải dùng hệ thống Queue (hàng đợi) và Job.
+2. **Soft Deletes:** Bảng dữ liệu quan trọng (User, Quiz, Kết quả thi) đều phải dùng trait `SoftDeletes` để tránh rủi ro mất dữ liệu vĩnh viễn.
+
+---
+
+## 📝 CÁCH AI PHẢN HỒI USER
+- Trước khi xuất ra code, hãy tóm tắt ngắn gọn các nguyên tắc bạn định áp dụng.
+- Viết code có chú thích rõ ràng bằng tiếng Việt ở các phần phức tạp.
+
+---
+
+## 📚 KHO SKILLS MỞ RỘNG (EXPANDED SKILLS)
+Ngoài các quy tắc cơ bản trên, hãy ĐỌC VÀ ÁP DỤNG các Skill chuyên sâu được định nghĩa trong thư mục `ai_skills/` của dự án này.
+- Xem chi tiết tại: `ai_skills/`
