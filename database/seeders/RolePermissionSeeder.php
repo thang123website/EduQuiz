@@ -10,28 +10,49 @@ use Illuminate\Database\Seeder;
 class RolePermissionSeeder extends Seeder {
     public function run(): void {
         // 1. Tạo Roles
-        $adminRole = Role::create(['name' => 'admin', 'caption' => 'Quản trị viên', 'is_admin' => true]);
-        $teacherRole = Role::create(['name' => 'teacher', 'caption' => 'Giáo viên', 'is_admin' => false]);
-        $studentRole = Role::create(['name' => 'student', 'caption' => 'Học sinh', 'is_admin' => false]);
+        $adminRole = Role::updateOrCreate(['name' => 'admin'], ['caption' => 'Quản trị viên', 'is_admin' => true]);
+        $teacherRole = Role::updateOrCreate(['name' => 'teacher'], ['caption' => 'Giáo viên', 'is_admin' => false]);
+        $studentRole = Role::updateOrCreate(['name' => 'student'], ['caption' => 'Học sinh', 'is_admin' => false]);
 
         // 2. Tạo Sections (Quyền)
         $sections = [
-            ['name' => 'admin_exams_list', 'caption' => 'Xem danh sách bài thi', 'group' => 'exams'],
-            ['name' => 'admin_exams_create', 'caption' => 'Tạo bài thi mới', 'group' => 'exams'],
-            ['name' => 'admin_exams_edit', 'caption' => 'Chỉnh sửa bài thi', 'group' => 'exams'],
-            ['name' => 'admin_users_manage', 'caption' => 'Quản lý người dùng', 'group' => 'users'],
+            ['name' => 'exams.view',            'caption' => 'Xem danh sách bài thi',   'group' => 'exams'],
+            ['name' => 'exams.create',          'caption' => 'Tạo bài thi mới',          'group' => 'exams'],
+            ['name' => 'exams.update',          'caption' => 'Chỉnh sửa bài thi',        'group' => 'exams'],
+            ['name' => 'exams.delete',          'caption' => 'Xoá bài thi',              'group' => 'exams'],
+            ['name' => 'users.view',            'caption' => 'Xem danh sách người dùng', 'group' => 'users'],
+            ['name' => 'users.create',          'caption' => 'Thêm người dùng mới',      'group' => 'users'],
+            ['name' => 'users.update',          'caption' => 'Chỉnh sửa người dùng',     'group' => 'users'],
+            ['name' => 'users.delete',          'caption' => 'Xoá người dùng',           'group' => 'users'],
+            ['name' => 'roles.view',            'caption' => 'Xem danh sách phân quyền', 'group' => 'users'],
+            ['name' => 'roles.create',          'caption' => 'Thêm phân quyền mới',      'group' => 'users'],
+            ['name' => 'roles.update',          'caption' => 'Chỉnh sửa phân quyền',     'group' => 'users'],
+            ['name' => 'roles.delete',          'caption' => 'Xoá phân quyền',           'group' => 'users'],
+            // Blog permissions
+            ['name' => 'blog.view',             'caption' => 'Xem danh sách bài viết',   'group' => 'blog'],
+            ['name' => 'blog.create',           'caption' => 'Tạo bài viết mới',         'group' => 'blog'],
+            ['name' => 'blog.update',           'caption' => 'Chỉnh sửa bài viết',       'group' => 'blog'],
+            ['name' => 'blog.delete',           'caption' => 'Xoá bài viết',             'group' => 'blog'],
+            ['name' => 'blog_category.view',    'caption' => 'Xem danh mục blog',        'group' => 'blog'],
+            ['name' => 'blog_category.create',  'caption' => 'Tạo danh mục mới',         'group' => 'blog'],
+            ['name' => 'blog_category.update',  'caption' => 'Chỉnh sửa danh mục',       'group' => 'blog'],
+            ['name' => 'blog_category.delete',  'caption' => 'Xoá danh mục',             'group' => 'blog'],
         ];
 
         foreach ($sections as $sec) {
-            $section = Section::create($sec);
+            $section = Section::updateOrCreate(['name' => $sec['name']], $sec);
 
             // Gán quyền cho Teacher (Chỉ được xem và tạo bài thi, không được quản lý User)
             if (str_contains($sec['name'], 'exams')) {
-                Permission::create([
-                    'role_id' => $teacherRole->id,
-                    'section_id' => $section->id,
-                    'allow' => true
-                ]);
+                Permission::updateOrCreate(
+                    [
+                        'role_id' => $teacherRole->id,
+                        'section_id' => $section->id,
+                    ],
+                    [
+                        'allow' => true
+                    ]
+                );
             }
         }
     }

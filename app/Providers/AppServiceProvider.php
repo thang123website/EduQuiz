@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Permission;
 use App\Models\Section;
+use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Observers\PermissionObserver;
+use App\Observers\BlogObserver;
+use App\Observers\BlogCategoryObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Permission::observe(PermissionObserver::class);
+        Blog::observe(BlogObserver::class);
+        BlogCategory::observe(BlogCategoryObserver::class);
 
         Gate::before(function ($user) {
             if ($user->isAdmin()) return true;

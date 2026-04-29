@@ -29,11 +29,48 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ is_active_route(['admin.dashboard']) }}" href="/admin">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                         <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
                     </a>
                 </li> <!-- end Dashboard Menu -->
-            </ul>
+
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Quản lý người dùng</span></li>
+                
+                @can('users.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                        <i class="ri-user-line"></i> <span data-key="t-users">Người dùng</span>
+                    </a>
+                </li>
+                @endcan
+
+                @can('roles.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">
+                        <i class="ri-shield-keyhole-line"></i> <span data-key="t-roles">Phân quyền</span>
+                    </a>
+                </li>
+                @endcan
+
+                @canany(['blog.view', 'blog_category.view'])
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Blog</span></li>
+
+                @can('blog.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.blog.*') ? 'active' : '' }}" href="{{ route('admin.blog.index') }}">
+                        <i class="ri-article-line"></i> <span>Bài viết</span>
+                    </a>
+                </li>
+                @endcan
+
+                @can('blog_category.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.blog-categories.*') ? 'active' : '' }}" href="{{ route('admin.blog-categories.index') }}">
+                        <i class="ri-folder-2-line"></i> <span>Danh mục</span>
+                    </a>
+                </li>
+                @endcan
+                @endcanany
         </div>
         <!-- Sidebar -->
     </div>

@@ -31,6 +31,8 @@ services:
     environment:
       MYSQL_DATABASE: eduquiz
       MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

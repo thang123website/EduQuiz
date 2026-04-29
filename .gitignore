@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Docker MySQL data files — KHÔNG commit vào Git
+docker/mysql/data/
