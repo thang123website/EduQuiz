@@ -99,6 +99,9 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}"> Cấu hình Media </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.mail') }}" class="nav-link {{ request()->routeIs('admin.settings.mail') ? 'active' : '' }}"> Cấu hình Email </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
