@@ -19,4 +19,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class);
     Route::resource('blog-categories', \App\Http\Controllers\Admin\BlogCategoryController::class);
     Route::resource('blog', \App\Http\Controllers\Admin\BlogController::class);
+
+    // Cấu hình hệ thống
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Media Manager
+    Route::prefix('media')->name('media.')->group(function () {
+        Route::get('/',           [\App\Http\Controllers\Admin\MediaController::class, 'index'])->name('index');
+        Route::post('/upload',    [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload');
+        Route::get('/files',      [\App\Http\Controllers\Admin\MediaController::class, 'files'])->name('files');
+        Route::delete('/{file}',  [\App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [\App\Http\Controllers\Admin\MediaController::class, 'bulkDestroy'])->name('bulk-destroy');
+        Route::post('/folders',   [\App\Http\Controllers\Admin\MediaController::class, 'createFolder'])->name('folders.store');
+    });
 });

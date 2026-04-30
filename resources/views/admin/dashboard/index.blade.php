@@ -38,14 +38,17 @@
 
 @push('scripts')
 <script>
-    document.querySelector('.btn-load').addEventListener('click', function() {
-        let btn = this;
-        btn.disabled = true;
-        btn.querySelector('.spinner-border').classList.remove('d-none');
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.querySelector('.spinner-border').classList.add('d-none');
-        }, 2000);
-    });
+    const btnLoad = document.querySelector('.btn-load');
+    if (btnLoad) {
+        btnLoad.addEventListener('click', function() {
+            let btn = this;
+            btn.disabled = true;
+            btn.querySelector('.spinner-border').classList.remove('d-none');
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.querySelector('.spinner-border').classList.add('d-none');
+            }, 2000);
+        });
+    }
 </script>
 @endpush

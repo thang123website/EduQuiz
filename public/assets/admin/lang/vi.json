@@ -1,0 +1,17 @@
+{
+    "t-menu": "Menu",
+    "t-dashboards": "Bảng điều khiển",
+    "t-apps": "Ứng dụng",
+    "t-layouts": "Bố cục",
+    "t-pages": "Trang",
+    "t-components": "Thành phần",
+    "t-system": "Hệ thống",
+    "t-users": "Người dùng",
+    "t-roles": "Phân quyền",
+    "t-media": "Thư viện Media",
+    "t-blog": "Quản lý Blog",
+    "t-posts": "Bài viết",
+    "t-categories": "Danh mục",
+    "t-logout": "Đăng xuất",
+    "t-profile": "Thông tin cá nhân"
+}

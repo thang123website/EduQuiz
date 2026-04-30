@@ -12,27 +12,30 @@ class BlogCategoryController extends Controller
     public function index()
     {
         Gate::authorize('blog_category.view');
-        $categories = BlogCategory::withCount('blogs')->latest()->paginate(15);
+        $categories = BlogCategory::getTree();
         return view('admin.blog-categories.index', compact('categories'));
     }
 
     public function create()
     {
         Gate::authorize('blog_category.create');
-        return view('admin.blog-categories.create');
+        $parentCategories = BlogCategory::getTree();
+        return view('admin.blog-categories.create', compact('parentCategories'));
     }
 
     public function store(Request $request)
     {
         Gate::authorize('blog_category.create');
         $request->validate([
-            'title' => 'required|string|max:255',
-            'slug'  => 'nullable|string|max:255|unique:blog_categories,slug',
+            'title'     => 'required|string|max:255',
+            'slug'      => 'nullable|string|max:255|unique:blog_categories,slug',
+            'parent_id' => 'nullable|exists:blog_categories,id',
         ]);
 
         BlogCategory::create([
-            'title' => $request->title,
-            'slug'  => $request->slug, // Nếu trống, Observer sẽ tự tạo
+            'title'     => $request->title,
+            'slug'      => $request->slug,
+            'parent_id' => $request->parent_id,
         ]);
 
         return redirect()->route('admin.blog-categories.index')
@@ -42,20 +45,25 @@ class BlogCategoryController extends Controller
     public function edit(BlogCategory $blogCategory)
     {
         Gate::authorize('blog_category.update');
-        return view('admin.blog-categories.edit', compact('blogCategory'));
+        // Lấy danh sách cha tiềm năng (loại bỏ chính nó và con của nó để tránh vòng lặp)
+        $parentCategories = BlogCategory::getTree();
+        // Lọc bỏ chính nó (để đơn giản trong logic select view)
+        return view('admin.blog-categories.edit', compact('blogCategory', 'parentCategories'));
     }
 
     public function update(Request $request, BlogCategory $blogCategory)
     {
         Gate::authorize('blog_category.update');
         $request->validate([
-            'title' => 'required|string|max:255',
-            'slug'  => 'nullable|string|max:255|unique:blog_categories,slug,' . $blogCategory->id,
+            'title'     => 'required|string|max:255',
+            'slug'      => 'nullable|string|max:255|unique:blog_categories,slug,' . $blogCategory->id,
+            'parent_id' => 'nullable|exists:blog_categories,id|different:id',
         ]);
 
         $blogCategory->update([
-            'title' => $request->title,
-            'slug'  => $request->slug ?: null, // Nếu trống, Observer sẽ tự tạo
+            'title'     => $request->title,
+            'slug'      => $request->slug ?: null,
+            'parent_id' => $request->parent_id,
         ]);
 
         return redirect()->route('admin.blog-categories.index')

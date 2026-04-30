@@ -37,6 +37,14 @@
                         <span class="mdi mdi-magnify search-widget-icon"></span>
                         <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none" id="search-close-options"></span>
                     </div>
+                    <div class="dropdown-menu dropdown-menu-lg" id="search-dropdown">
+                        <div data-simplebar style="max-height: 320px;">
+                            <!-- item-->
+                            <div class="dropdown-header">
+                                <h6 class="text-overflow text-muted mb-0 text-uppercase">Recent Searches</h6>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 

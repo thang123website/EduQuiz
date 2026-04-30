@@ -6,6 +6,7 @@
     <title>@yield('title') | EduQuiz Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="EduQuiz Admin Dashboard" name="description" />
+    <script>var PATH_ROOT = "{{ url('/') }}";</script>
     <meta content="EduQuiz" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('assets/admin/images/favicon.ico') }}">
@@ -14,6 +15,15 @@
 </head>
 
 <body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-border text-primary avatar-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -40,6 +50,51 @@
 
     </div>
     <!-- END layout-wrapper -->
+
+    @include('admin.layouts.partials.modals')
+
+    <!-- Back to Top Button -->
+    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+
+    @include('admin.layouts.partials.customizer')
+
+    <!-- Vertical Overlay-->
+    <div class="vertical-overlay"></div>
+
+    <script>
+        function topFunction() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        window.onscroll = function() {
+            const btn = document.getElementById("back-to-top");
+            if (btn) {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    btn.style.display = "block";
+                } else {
+                    btn.style.display = "none";
+                }
+            }
+        };
+
+        // Global Delete Confirmation Handler
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.confirm-delete')) {
+                e.preventDefault();
+                const btn = e.target.closest('.confirm-delete');
+                const form = btn.closest('form');
+                const modalElement = document.getElementById('deleteRecordModal');
+                const modal = new bootstrap.Modal(modalElement);
+                
+                document.getElementById('confirm-delete-btn').onclick = function() {
+                    form.submit();
+                };
+                
+                modal.show();
+            }
+        });
+    </script>
 
     @include('admin.layouts.vendor-scripts')
 </body>

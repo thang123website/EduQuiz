@@ -23,7 +23,7 @@ class BlogController extends Controller
     public function create()
     {
         Gate::authorize('blog.create');
-        $categories = BlogCategory::orderBy('title')->get();
+        $categories = BlogCategory::getTree();
         return view('admin.blog.create', compact('categories'));
     }
 
@@ -36,15 +36,10 @@ class BlogController extends Controller
             'category_id'    => 'nullable|exists:blog_categories,id',
             'description'    => 'nullable|string',
             'content'        => 'required|string',
-            'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image'          => 'nullable|string', // Chuyển thành string để nhận URL từ Media Manager
             'enable_comment' => 'nullable|boolean',
             'status'         => 'required|in:pending,publish',
         ]);
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('blog', 'public');
-        }
 
         Blog::create([
             'title'          => $request->title,
@@ -53,7 +48,7 @@ class BlogController extends Controller
             'author_id'      => auth()->id(),
             'description'    => $request->description,
             'content'        => $request->content,
-            'image'          => $imagePath,
+            'image'          => $request->image,
             'enable_comment' => $request->boolean('enable_comment', true),
             'status'         => $request->status,
         ]);
@@ -65,7 +60,7 @@ class BlogController extends Controller
     public function edit(Blog $blog)
     {
         Gate::authorize('blog.update');
-        $categories = BlogCategory::orderBy('title')->get();
+        $categories = BlogCategory::getTree();
         return view('admin.blog.edit', compact('blog', 'categories'));
     }
 
@@ -78,30 +73,21 @@ class BlogController extends Controller
             'category_id'    => 'nullable|exists:blog_categories,id',
             'description'    => 'nullable|string',
             'content'        => 'required|string',
-            'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image'          => 'nullable|string', // Chuyển thành string
             'enable_comment' => 'nullable|boolean',
             'status'         => 'required|in:pending,publish',
         ]);
 
-        $data = [
+        $blog->update([
             'title'          => $request->title,
             'slug'           => $request->slug,
             'category_id'    => $request->category_id,
             'description'    => $request->description,
             'content'        => $request->content,
+            'image'          => $request->image,
             'enable_comment' => $request->boolean('enable_comment', true),
             'status'         => $request->status,
-        ];
-
-        if ($request->hasFile('image')) {
-            // Xóa ảnh cũ trước khi upload ảnh mới
-            if ($blog->image) {
-                Storage::disk('public')->delete($blog->image);
-            }
-            $data['image'] = $request->file('image')->store('blog', 'public');
-        }
-
-        $blog->update($data);
+        ]);
 
         return redirect()->route('admin.blog.index')
             ->with('success', 'Cập nhật bài viết thành công');
@@ -111,11 +97,7 @@ class BlogController extends Controller
     {
         Gate::authorize('blog.delete');
 
-        // Xóa file ảnh trước khi xóa bản ghi
-        if ($blog->image) {
-            Storage::disk('public')->delete($blog->image);
-        }
-
+        // Không xóa file ảnh ở đây vì ảnh thuộc về Media Manager quản lý
         $blog->delete();
 
         return redirect()->route('admin.blog.index')

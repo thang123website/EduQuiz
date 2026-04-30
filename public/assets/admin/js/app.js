@@ -12,7 +12,7 @@
     }
 
     function n(e) {
-        document.getElementById("header-lang-img") && ("en" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/images/flags/us.svg` : "sp" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/spain.svg" : "gr" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/germany.svg" : "it" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/italy.svg" : "ru" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/russia.svg" : "ch" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/china.svg" : "fr" == e ? document.getElementById("header-lang-img").src = "assets/images/flags/french.svg" : "ar" == e && (document.getElementById("header-lang-img").src = "assets/images/flags/ae.svg"), localStorage.setItem("language", e), null == (a = localStorage.getItem("language")) && n(t), (e = new XMLHttpRequest).open("GET", `${PATH_ROOT}/assets/lang/` + a + ".json"), e.onreadystatechange = function () {
+        document.getElementById("header-lang-img") && ("en" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/us.svg` : "sp" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/spain.svg` : "gr" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/germany.svg` : "it" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/italy.svg` : "ru" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/russia.svg` : "ch" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/china.svg` : "fr" == e ? document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/french.svg` : "ar" == e && (document.getElementById("header-lang-img").src = `${PATH_ROOT}/assets/admin/images/flags/ae.svg`), localStorage.setItem("language", e), null == (a = localStorage.getItem("language")) && n(t), location.protocol !== "file:" ? ((e = new XMLHttpRequest).open("GET", `${PATH_ROOT}/assets/admin/lang/` + a + ".json"), e.onreadystatechange = function () {
             var a;
             4 === this.readyState && 200 === this.status && (a = JSON.parse(this.responseText), Object.keys(a).forEach(function (t) {
                 var e = document.querySelectorAll("[data-key='" + t + "']");
@@ -20,13 +20,13 @@
                     e.textContent = a[t]
                 })
             }))
-        }, e.send())
+        }, e.send()) : console.warn("Translation skipped: CORS restriction on file:// protocol. Use a local server to enable translations."))
     }
 
     function s() {
         var e;
         document.querySelectorAll(".navbar-nav .collapse") && (e = document.querySelectorAll(".navbar-nav .collapse"), Array.from(e).forEach(function (t) {
-            var a = new bootstrap.Collapse(t, {toggle: !1});
+            var a = new bootstrap.Collapse(t, { toggle: !1 });
             t.addEventListener("show.bs.collapse", function (e) {
                 e.stopPropagation();
                 var e = t.parentElement.closest(".collapse");
@@ -199,133 +199,133 @@
     function e(e) {
         if (e == e) {
             switch (e["data-layout"]) {
-                case"vertical":
+                case "vertical":
                     T("data-layout", "vertical"), sessionStorage.setItem("data-layout", "vertical"), document.documentElement.setAttribute("data-layout", "vertical"), y("vertical"), s();
                     break;
-                case"horizontal":
+                case "horizontal":
                     T("data-layout", "horizontal"), sessionStorage.setItem("data-layout", "horizontal"), document.documentElement.setAttribute("data-layout", "horizontal"), y("horizontal");
                     break;
-                case"twocolumn":
+                case "twocolumn":
                     T("data-layout", "twocolumn"), sessionStorage.setItem("data-layout", "twocolumn"), document.documentElement.setAttribute("data-layout", "twocolumn"), y("twocolumn");
                     break;
-                case"semibox":
+                case "semibox":
                     T("data-layout", "semibox"), sessionStorage.setItem("data-layout", "semibox"), document.documentElement.setAttribute("data-layout", "semibox"), y("semibox");
                     break;
                 default:
                     "vertical" == sessionStorage.getItem("data-layout") && sessionStorage.getItem("data-layout") ? (T("data-layout", "vertical"), sessionStorage.setItem("data-layout", "vertical"), document.documentElement.setAttribute("data-layout", "vertical"), y("vertical"), s()) : "horizontal" == sessionStorage.getItem("data-layout") ? (T("data-layout", "horizontal"), sessionStorage.setItem("data-layout", "horizontal"), document.documentElement.setAttribute("data-layout", "horizontal"), y("horizontal")) : "twocolumn" == sessionStorage.getItem("data-layout") ? (T("data-layout", "twocolumn"), sessionStorage.setItem("data-layout", "twocolumn"), document.documentElement.setAttribute("data-layout", "twocolumn"), y("twocolumn")) : "semibox" == sessionStorage.getItem("data-layout") && (T("data-layout", "semibox"), sessionStorage.setItem("data-layout", "semibox"), document.documentElement.setAttribute("data-layout", "semibox"), y("semibox"))
             }
             switch (e["data-topbar"]) {
-                case"light":
+                case "light":
                     T("data-topbar", "light"), sessionStorage.setItem("data-topbar", "light"), document.documentElement.setAttribute("data-topbar", "light");
                     break;
-                case"dark":
+                case "dark":
                     T("data-topbar", "dark"), sessionStorage.setItem("data-topbar", "dark"), document.documentElement.setAttribute("data-topbar", "dark");
                     break;
                 default:
                     "dark" == sessionStorage.getItem("data-topbar") ? (T("data-topbar", "dark"), sessionStorage.setItem("data-topbar", "dark"), document.documentElement.setAttribute("data-topbar", "dark")) : (T("data-topbar", "light"), sessionStorage.setItem("data-topbar", "light"), document.documentElement.setAttribute("data-topbar", "light"))
             }
             switch ("hidden" === e["data-sidebar-visibility"] ? (T("data-sidebar-visibility", "hidden"), sessionStorage.setItem("data-sidebar-visibility", "hidden"), document.documentElement.setAttribute("data-sidebar-visibility", "hidden")) : (T("data-sidebar-visibility", "show"), sessionStorage.setItem("data-sidebar-visibility", "show"), document.documentElement.setAttribute("data-sidebar-visibility", "show")), e["data-layout-style"]) {
-                case"default":
+                case "default":
                     T("data-layout-style", "default"), sessionStorage.setItem("data-layout-style", "default"), document.documentElement.setAttribute("data-layout-style", "default");
                     break;
-                case"detached":
+                case "detached":
                     T("data-layout-style", "detached"), sessionStorage.setItem("data-layout-style", "detached"), document.documentElement.setAttribute("data-layout-style", "detached");
                     break;
                 default:
                     "detached" == sessionStorage.getItem("data-layout-style") ? (T("data-layout-style", "detached"), sessionStorage.setItem("data-layout-style", "detached"), document.documentElement.setAttribute("data-layout-style", "detached")) : (T("data-layout-style", "default"), sessionStorage.setItem("data-layout-style", "default"), document.documentElement.setAttribute("data-layout-style", "default"))
             }
             switch (e["data-sidebar-size"]) {
-                case"lg":
+                case "lg":
                     T("data-sidebar-size", "lg"), document.documentElement.setAttribute("data-sidebar-size", "lg"), sessionStorage.setItem("data-sidebar-size", "lg");
                     break;
-                case"sm":
+                case "sm":
                     T("data-sidebar-size", "sm"), document.documentElement.setAttribute("data-sidebar-size", "sm"), sessionStorage.setItem("data-sidebar-size", "sm");
                     break;
-                case"md":
+                case "md":
                     T("data-sidebar-size", "md"), document.documentElement.setAttribute("data-sidebar-size", "md"), sessionStorage.setItem("data-sidebar-size", "md");
                     break;
-                case"sm-hover":
+                case "sm-hover":
                     T("data-sidebar-size", "sm-hover"), document.documentElement.setAttribute("data-sidebar-size", "sm-hover"), sessionStorage.setItem("data-sidebar-size", "sm-hover");
                     break;
                 default:
                     "sm" == sessionStorage.getItem("data-sidebar-size") ? (document.documentElement.setAttribute("data-sidebar-size", "sm"), T("data-sidebar-size", "sm"), sessionStorage.setItem("data-sidebar-size", "sm")) : "md" == sessionStorage.getItem("data-sidebar-size") ? (document.documentElement.setAttribute("data-sidebar-size", "md"), T("data-sidebar-size", "md"), sessionStorage.setItem("data-sidebar-size", "md")) : "sm-hover" == sessionStorage.getItem("data-sidebar-size") ? (document.documentElement.setAttribute("data-sidebar-size", "sm-hover"), T("data-sidebar-size", "sm-hover"), sessionStorage.setItem("data-sidebar-size", "sm-hover")) : (document.documentElement.setAttribute("data-sidebar-size", "lg"), T("data-sidebar-size", "lg"), sessionStorage.setItem("data-sidebar-size", "lg"))
             }
             switch (e["data-bs-theme"]) {
-                case"light":
+                case "light":
                     T("data-bs-theme", "light"), document.documentElement.setAttribute("data-bs-theme", "light"), sessionStorage.setItem("data-bs-theme", "light");
                     break;
-                case"dark":
+                case "dark":
                     T("data-bs-theme", "dark"), document.documentElement.setAttribute("data-bs-theme", "dark"), sessionStorage.setItem("data-bs-theme", "dark");
                     break;
                 default:
                     sessionStorage.getItem("data-bs-theme") && "dark" == sessionStorage.getItem("data-bs-theme") ? (sessionStorage.setItem("data-bs-theme", "dark"), document.documentElement.setAttribute("data-bs-theme", "dark"), T("data-bs-theme", "dark")) : (sessionStorage.setItem("data-bs-theme", "light"), document.documentElement.setAttribute("data-bs-theme", "light"), T("data-bs-theme", "light"))
             }
             switch (e["data-layout-width"]) {
-                case"fluid":
+                case "fluid":
                     T("data-layout-width", "fluid"), document.documentElement.setAttribute("data-layout-width", "fluid"), sessionStorage.setItem("data-layout-width", "fluid");
                     break;
-                case"boxed":
+                case "boxed":
                     T("data-layout-width", "boxed"), document.documentElement.setAttribute("data-layout-width", "boxed"), sessionStorage.setItem("data-layout-width", "boxed");
                     break;
                 default:
                     "boxed" == sessionStorage.getItem("data-layout-width") ? (sessionStorage.setItem("data-layout-width", "boxed"), document.documentElement.setAttribute("data-layout-width", "boxed"), T("data-layout-width", "boxed")) : (sessionStorage.setItem("data-layout-width", "fluid"), document.documentElement.setAttribute("data-layout-width", "fluid"), T("data-layout-width", "fluid"))
             }
             switch (e["data-sidebar"]) {
-                case"light":
+                case "light":
                     T("data-sidebar", "light"), sessionStorage.setItem("data-sidebar", "light"), document.documentElement.setAttribute("data-sidebar", "light");
                     break;
-                case"dark":
+                case "dark":
                     T("data-sidebar", "dark"), sessionStorage.setItem("data-sidebar", "dark"), document.documentElement.setAttribute("data-sidebar", "dark");
                     break;
-                case"gradient":
+                case "gradient":
                     T("data-sidebar", "gradient"), sessionStorage.setItem("data-sidebar", "gradient"), document.documentElement.setAttribute("data-sidebar", "gradient");
                     break;
-                case"gradient-2":
+                case "gradient-2":
                     T("data-sidebar", "gradient-2"), sessionStorage.setItem("data-sidebar", "gradient-2"), document.documentElement.setAttribute("data-sidebar", "gradient-2");
                     break;
-                case"gradient-3":
+                case "gradient-3":
                     T("data-sidebar", "gradient-3"), sessionStorage.setItem("data-sidebar", "gradient-3"), document.documentElement.setAttribute("data-sidebar", "gradient-3");
                     break;
-                case"gradient-4":
+                case "gradient-4":
                     T("data-sidebar", "gradient-4"), sessionStorage.setItem("data-sidebar", "gradient-4"), document.documentElement.setAttribute("data-sidebar", "gradient-4");
                     break;
                 default:
                     sessionStorage.getItem("data-sidebar") && "light" == sessionStorage.getItem("data-sidebar") ? (sessionStorage.setItem("data-sidebar", "light"), T("data-sidebar", "light"), document.documentElement.setAttribute("data-sidebar", "light")) : "dark" == sessionStorage.getItem("data-sidebar") ? (sessionStorage.setItem("data-sidebar", "dark"), T("data-sidebar", "dark"), document.documentElement.setAttribute("data-sidebar", "dark")) : "gradient" == sessionStorage.getItem("data-sidebar") ? (sessionStorage.setItem("data-sidebar", "gradient"), T("data-sidebar", "gradient"), document.documentElement.setAttribute("data-sidebar", "gradient")) : "gradient-2" == sessionStorage.getItem("data-sidebar") ? (sessionStorage.setItem("data-sidebar", "gradient-2"), T("data-sidebar", "gradient-2"), document.documentElement.setAttribute("data-sidebar", "gradient-2")) : "gradient-3" == sessionStorage.getItem("data-sidebar") ? (sessionStorage.setItem("data-sidebar", "gradient-3"), T("data-sidebar", "gradient-3"), document.documentElement.setAttribute("data-sidebar", "gradient-3")) : "gradient-4" == sessionStorage.getItem("data-sidebar") && (sessionStorage.setItem("data-sidebar", "gradient-4"), T("data-sidebar", "gradient-4"), document.documentElement.setAttribute("data-sidebar", "gradient-4"))
             }
             switch (e["data-sidebar-image"]) {
-                case"none":
+                case "none":
                     T("data-sidebar-image", "none"), sessionStorage.setItem("data-sidebar-image", "none"), document.documentElement.setAttribute("data-sidebar-image", "none");
                     break;
-                case"img-1":
+                case "img-1":
                     T("data-sidebar-image", "img-1"), sessionStorage.setItem("data-sidebar-image", "img-1"), document.documentElement.setAttribute("data-sidebar-image", "img-1");
                     break;
-                case"img-2":
+                case "img-2":
                     T("data-sidebar-image", "img-2"), sessionStorage.setItem("data-sidebar-image", "img-2"), document.documentElement.setAttribute("data-sidebar-image", "img-2");
                     break;
-                case"img-3":
+                case "img-3":
                     T("data-sidebar-image", "img-3"), sessionStorage.setItem("data-sidebar-image", "img-3"), document.documentElement.setAttribute("data-sidebar-image", "img-3");
                     break;
-                case"img-4":
+                case "img-4":
                     T("data-sidebar-image", "img-4"), sessionStorage.setItem("data-sidebar-image", "img-4"), document.documentElement.setAttribute("data-sidebar-image", "img-4");
                     break;
                 default:
                     sessionStorage.getItem("data-sidebar-image") && "none" == sessionStorage.getItem("data-sidebar-image") ? (sessionStorage.setItem("data-sidebar-image", "none"), T("data-sidebar-image", "none"), document.documentElement.setAttribute("data-sidebar-image", "none")) : "img-1" == sessionStorage.getItem("data-sidebar-image") ? (sessionStorage.setItem("data-sidebar-image", "img-1"), T("data-sidebar-image", "img-1"), document.documentElement.setAttribute("data-sidebar-image", "img-2")) : "img-2" == sessionStorage.getItem("data-sidebar-image") ? (sessionStorage.setItem("data-sidebar-image", "img-2"), T("data-sidebar-image", "img-2"), document.documentElement.setAttribute("data-sidebar-image", "img-2")) : "img-3" == sessionStorage.getItem("data-sidebar-image") ? (sessionStorage.setItem("data-sidebar-image", "img-3"), T("data-sidebar-image", "img-3"), document.documentElement.setAttribute("data-sidebar-image", "img-3")) : "img-4" == sessionStorage.getItem("data-sidebar-image") && (sessionStorage.setItem("data-sidebar-image", "img-4"), T("data-sidebar-image", "img-4"), document.documentElement.setAttribute("data-sidebar-image", "img-4"))
             }
             switch (e["data-layout-position"]) {
-                case"fixed":
+                case "fixed":
                     T("data-layout-position", "fixed"), sessionStorage.setItem("data-layout-position", "fixed"), document.documentElement.setAttribute("data-layout-position", "fixed");
                     break;
-                case"scrollable":
+                case "scrollable":
                     T("data-layout-position", "scrollable"), sessionStorage.setItem("data-layout-position", "scrollable"), document.documentElement.setAttribute("data-layout-position", "scrollable");
                     break;
                 default:
                     sessionStorage.getItem("data-layout-position") && "scrollable" == sessionStorage.getItem("data-layout-position") ? (T("data-layout-position", "scrollable"), sessionStorage.setItem("data-layout-position", "scrollable"), document.documentElement.setAttribute("data-layout-position", "scrollable")) : (T("data-layout-position", "fixed"), sessionStorage.setItem("data-layout-position", "fixed"), document.documentElement.setAttribute("data-layout-position", "fixed"))
             }
             switch (e["data-preloader"]) {
-                case"disable":
+                case "disable":
                     T("data-preloader", "disable"), sessionStorage.setItem("data-preloader", "disable"), document.documentElement.setAttribute("data-preloader", "disable");
                     break;
-                case"enable":
+                case "enable":
                     T("data-preloader", "enable"), sessionStorage.setItem("data-preloader", "enable"), document.documentElement.setAttribute("data-preloader", "enable"), (t = document.getElementById("preloader")) && window.addEventListener("load", function () {
                         t.style.opacity = "0", t.style.visibility = "hidden"
                     });
@@ -337,16 +337,16 @@
                     })) : document.documentElement.setAttribute("data-preloader", "disable")
             }
             switch (e["data-body-image"]) {
-                case"img-1":
+                case "img-1":
                     T("data-body-image", "img-1"), sessionStorage.setItem("data-sidebabodyr-image", "img-1"), document.documentElement.setAttribute("data-body-image", "img-1"), document.getElementById("theme-settings-offcanvas") && document.documentElement.removeAttribute("data-sidebar-image");
                     break;
-                case"img-2":
+                case "img-2":
                     T("data-body-image", "img-2"), sessionStorage.setItem("data-body-image", "img-2"), document.documentElement.setAttribute("data-body-image", "img-2");
                     break;
-                case"img-3":
+                case "img-3":
                     T("data-body-image", "img-3"), sessionStorage.setItem("data-body-image", "img-3"), document.documentElement.setAttribute("data-body-image", "img-3");
                     break;
-                case"none":
+                case "none":
                     T("data-body-image", "none"), sessionStorage.setItem("data-body-image", "none"), document.documentElement.setAttribute("data-body-image", "none");
                     break;
                 default:
@@ -377,13 +377,13 @@
             })
         }), document.getElementById("collapseBgGradient") && Array.from(document.querySelectorAll("#collapseBgGradient .form-check input")).forEach(function (e) {
             var t = document.getElementById("collapseBgGradient");
-            1 == e.checked && new bootstrap.Collapse(t, {toggle: !1}).show(), document.querySelector("[data-bs-target='#collapseBgGradient']") && document.querySelector("[data-bs-target='#collapseBgGradient']").addEventListener("click", function (e) {
+            1 == e.checked && new bootstrap.Collapse(t, { toggle: !1 }).show(), document.querySelector("[data-bs-target='#collapseBgGradient']") && document.querySelector("[data-bs-target='#collapseBgGradient']").addEventListener("click", function (e) {
                 document.getElementById("sidebar-color-gradient").click()
             })
         }), document.querySelectorAll("[data-bs-target='#collapseBgGradient.show']") && Array.from(document.querySelectorAll("[data-bs-target='#collapseBgGradient.show']")).forEach(function (e) {
             e.addEventListener("click", function () {
                 var e = document.getElementById("collapseBgGradient");
-                new bootstrap.Collapse(e, {toggle: !1}).hide()
+                new bootstrap.Collapse(e, { toggle: !1 }).hide()
             })
         }), Array.from(document.querySelectorAll("[name='data-sidebar']")).forEach(function (e) {
             document.querySelector("[data-bs-target='#collapseBgGradient']") && (document.querySelector("#collapseBgGradient .form-check input:checked") ? document.querySelector("[data-bs-target='#collapseBgGradient']").classList.add("active") : document.querySelector("[data-bs-target='#collapseBgGradient']").classList.remove("active"), e.addEventListener("change", function () {
@@ -412,12 +412,12 @@
         Array.from(document.querySelectorAll("#notificationItemsTabContent .tab-pane")).forEach(function (e) {
             0 < e.querySelectorAll(".notification-item").length ? e.querySelector(".view-all") && (e.querySelector(".view-all").style.display = "block") :
                 (e.querySelector(".view-all") && (e.querySelector(".view-all").style.display = "none"),
-                e.querySelector(".empty-notification-elem") ||
-                (e.innerHTML +=
-                    '<div class="empty-notification-elem">\t\t\t\t\t\t\t' +
-                    '<div class="w-25 w-sm-50 pt-3 mx-auto">\t\t\t\t\t\t\t\t' +
-                    `<img src="${PATH_ROOT}/assets/images/svg/bell.svg" class="img-fluid" alt="user-pic">\t\t\t\t\t\t\t` +
-                    '</div>\t\t\t\t\t\t\t<div class="text-center pb-5 mt-2">\t\t\t\t\t\t\t\t<h6 class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </h6>\t\t\t\t\t\t\t</div>\t\t\t\t\t\t</div>'))
+                    e.querySelector(".empty-notification-elem") ||
+                    (e.innerHTML +=
+                        '<div class="empty-notification-elem">\t\t\t\t\t\t\t' +
+                        '<div class="w-25 w-sm-50 pt-3 mx-auto">\t\t\t\t\t\t\t\t' +
+                        `<img src="${PATH_ROOT}/assets/images/svg/bell.svg" class="img-fluid" alt="user-pic">\t\t\t\t\t\t\t` +
+                        '</div>\t\t\t\t\t\t\t<div class="text-center pb-5 mt-2">\t\t\t\t\t\t\t\t<h6 class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </h6>\t\t\t\t\t\t\t</div>\t\t\t\t\t\t</div>'))
         })
     }
 
@@ -493,10 +493,10 @@
                 position: e.position,
                 className: "bg-" + e.className,
                 stopOnFocus: !0,
-                offset: {x: e.offset ? 50 : 0, y: e.offset ? 10 : 0},
+                offset: { x: e.offset ? 50 : 0, y: e.offset ? 10 : 0 },
                 duration: e.duration,
                 close: "close" == e.close,
-                style: "style" == e.style ? {background: "linear-gradient(to right, #0AB39C, #405189)"} : ""
+                style: "style" == e.style ? { background: "linear-gradient(to right, #0AB39C, #405189)" } : ""
             }).showToast()
         })
     }), z = document.querySelectorAll("[data-choices]"), Array.from(z).forEach(function (e) {

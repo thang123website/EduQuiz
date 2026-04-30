@@ -94,10 +94,10 @@
                                             </a>
                                             @endcan
                                             @can('blog.delete')
-                                            <form action="{{ route('admin.blog.destroy', $blog) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa bài viết này?')">
+                                            <form action="{{ route('admin.blog.destroy', $blog) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                <button type="button" class="btn btn-sm btn-danger confirm-delete">
                                                     <i class="ri-delete-bin-line"></i>
                                                 </button>
                                             </form>

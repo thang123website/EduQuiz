@@ -37,6 +37,10 @@ class RolePermissionSeeder extends Seeder {
             ['name' => 'blog_category.create',  'caption' => 'Tạo danh mục mới',         'group' => 'blog'],
             ['name' => 'blog_category.update',  'caption' => 'Chỉnh sửa danh mục',       'group' => 'blog'],
             ['name' => 'blog_category.delete',  'caption' => 'Xoá danh mục',             'group' => 'blog'],
+            // Media permissions
+            ['name' => 'media.view',            'caption' => 'Xem thư viện media',        'group' => 'media'],
+            ['name' => 'media.upload',          'caption' => 'Upload file media',          'group' => 'media'],
+            ['name' => 'media.delete',          'caption' => 'Xoá file media',             'group' => 'media'],
         ];
 
         foreach ($sections as $sec) {

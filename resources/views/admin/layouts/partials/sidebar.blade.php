@@ -34,6 +34,14 @@
                     </a>
                 </li> <!-- end Dashboard Menu -->
 
+                @can('media.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}" href="{{ route('admin.media.index') }}">
+                        <i class="ri-image-2-line"></i> <span>Thư viện Media</span>
+                    </a>
+                </li>
+                @endcan
+
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Quản lý người dùng</span></li>
                 
                 @can('users.view')
@@ -71,11 +79,26 @@
                 </li>
                 @endcan
                 @endcanany
+
+                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
+                        <i class="ri-settings-3-line"></i> <span>Hệ thống</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.settings.*') ? 'show' : '' }}" id="sidebarSettings">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}"> Cấu hình Media </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
         </div>
         <!-- Sidebar -->
     </div>
     <div class="sidebar-background"></div>
 </div>
 <!-- Left Sidebar End -->
-<!-- Vertical Overlay-->
-<div class="vertical-overlay"></div>
+
+

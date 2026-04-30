@@ -55,7 +55,12 @@
                                 @forelse($categories as $category)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td class="fw-medium">{{ $category->title }}</td>
+                                    <td class="fw-medium">
+                                        @if($category->level > 0)
+                                            <span class="text-muted">{{ str_repeat('|—— ', $category->level) }}</span>
+                                        @endif
+                                        {{ $category->title }}
+                                    </td>
                                     <td><code class="text-primary">{{ $category->slug }}</code></td>
                                     <td>
                                         <span class="badge bg-info-subtle text-info">{{ $category->blogs_count }} bài viết</span>
@@ -69,10 +74,10 @@
                                             </a>
                                             @endcan
                                             @can('blog_category.delete')
-                                            <form action="{{ route('admin.blog-categories.destroy', $category) }}" method="POST" onsubmit="return confirm('Xóa danh mục này? Các bài viết thuộc danh mục sẽ không bị xóa.')">
+                                            <form action="{{ route('admin.blog-categories.destroy', $category) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                <button type="button" class="btn btn-sm btn-danger confirm-delete">
                                                     <i class="ri-delete-bin-line"></i> Xóa
                                                 </button>
                                             </form>
@@ -91,9 +96,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-3">
-                        {{ $categories->links() }}
-                    </div>
+                    {{-- Bỏ phân trang vì hiển thị theo cây --}}
                 </div>
             </div>
         </div>

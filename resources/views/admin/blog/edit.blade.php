@@ -27,7 +27,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.blog.update', $blog) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.blog.update', $blog) }}" method="POST">
         @csrf
         @method('PUT')
         <div class="row">
@@ -68,15 +68,17 @@
                         <!-- Ảnh đại diện -->
                         <div class="mb-3">
                             <label class="form-label">Ảnh đại diện</label>
-                            @if($blog->image)
-                                <div class="mb-2">
-                                    <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}" class="img-fluid rounded" style="max-height: 150px;">
-                                    <small class="d-block text-muted mt-1">Ảnh hiện tại. Upload ảnh mới để thay thế.</small>
+                            <div class="d-flex flex-column gap-2">
+                                <input type="hidden" id="image" name="image" value="{{ old('image', $blog->image) }}">
+                                <button type="button" class="btn btn-outline-primary" onclick="openMediaPicker('image', 'imgPreviewDisplay')">
+                                    <i class="ri-image-2-line me-1"></i> Chọn ảnh đại diện
+                                </button>
+                                <div id="imagePreview" class="picker-preview-wrap {{ old('image', $blog->image) ? '' : 'd-none' }}">
+                                    <img src="{{ old('image', $blog->image) }}" id="imgPreviewDisplay" alt="Preview" class="img-fluid rounded border" style="max-height: 200px;">
+                                    <button type="button" class="btn btn-sm btn-danger mt-1 d-block w-100" onclick="removeImage()">
+                                        <i class="ri-delete-bin-line me-1"></i> Xóa ảnh
+                                    </button>
                                 </div>
-                            @endif
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*" onchange="previewImage(this)">
-                            <div id="imagePreview" class="mt-2 d-none">
-                                <img src="" alt="Preview" class="img-fluid rounded" style="max-height: 150px;">
                             </div>
                         </div>
 
@@ -87,6 +89,9 @@
                                 <option value="">— Không có danh mục —</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ old('category_id', $blog->category_id) == $category->id ? 'selected' : '' }}>
+                                        @if($category->level > 0)
+                                            {{ str_repeat('— ', $category->level) }}
+                                        @endif
                                         {{ $category->title }}
                                     </option>
                                 @endforeach
@@ -137,21 +142,17 @@
             </div>
         </div>
     </form>
+
+    {{-- Thêm Modal Picker --}}
+    @include('admin.media.picker-modal')
 @endsection
 
 @push('scripts')
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        const img = preview.querySelector('img');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                img.src = e.target.result;
-                preview.classList.remove('d-none');
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    function removeImage() {
+        document.getElementById('image').value = '';
+        document.getElementById('imagePreview').classList.add('d-none');
+        document.getElementById('imgPreviewDisplay').src = '';
     }
 </script>
 @endpush

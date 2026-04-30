@@ -2,6 +2,12 @@
 
 Khi thiết kế hoặc tích hợp giao diện Admin từ template HTML thuần (Velzon) vào Laravel, AI BẮT BUỘC phải tuân thủ các quy tắc chuẩn Senior "10/10" dưới đây để đảm bảo tính tái sử dụng cao, tốc độ load trang cực nhanh và cấu trúc thư mục tối ưu.
 
+## 0. Source of Truth (Tham chiếu UI mẫu)
+- **Luôn sử dụng UI chuẩn:** Mọi trang và thành phần giao diện Admin (như Card, Form, Table, Modal, Tab, v.v.) BẮT BUỘC phải được tham chiếu và lấy trực tiếp từ các file HTML mẫu tại thư mục: `/home/thang/EduQuiz/public/ui_velzon_admin`.
+- **Phân tích trước khi code:** Trước khi tạo một trang mới, AI phải tìm trang tương ứng trong bộ UI mẫu (ví dụ: `pages-profile-settings.html` cho trang cài đặt, `apps-ecommerce-products.html` cho trang danh sách) để đảm bảo đồng nhất 100% về Class CSS, cấu trúc DOM và các ID mà JavaScript yêu cầu.
+- **Tuyệt đối không tự viết CSS riêng:** Nếu cần tùy chỉnh giao diện, hãy ưu tiên sử dụng các class Utility của Bootstrap 5 hoặc các class có sẵn của Velzon. Chỉ viết CSS thêm khi thực sự cần thiết và phải đặt trong `@push('styles')`.
+
+
 ## 1. Smart Asset Management (Quản lý CSS/JS tối ưu)
 - **Không Bundle thư viện khổng lồ:** Phục vụ file tĩnh (CSS/JS/Images) lõi của Velzon từ thư mục `public/assets/admin/`. Vite chỉ dùng cho Custom Code.
 - **Sử dụng Stacks:** Đảm bảo thứ tự ưu tiên (Z-index, Override CSS) luôn đúng bằng cách sử dụng `@stack`.

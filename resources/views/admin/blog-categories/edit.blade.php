@@ -38,6 +38,20 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
+                            <label for="parent_id" class="form-label">Danh mục cha</label>
+                            <select class="form-select" id="parent_id" name="parent_id">
+                                <option value="">— Là danh mục gốc —</option>
+                                @foreach($parentCategories as $parent)
+                                    <option value="{{ $parent->id }}" {{ old('parent_id', $blogCategory->parent_id) == $parent->id ? 'selected' : '' }} {{ $parent->id == $blogCategory->id ? 'disabled' : '' }}>
+                                        @if($parent->level > 0)
+                                            {{ str_repeat('— ', $parent->level) }}
+                                        @endif
+                                        {{ $parent->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="title" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $blogCategory->title) }}" required>
                         </div>

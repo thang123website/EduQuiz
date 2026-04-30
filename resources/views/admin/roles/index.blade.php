@@ -94,10 +94,10 @@
                                             @endcan
                                             @can('roles.delete')
                                             <div class="remove">
-                                                <form action="{{ route('admin.roles.destroy', $role) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vai trò này?');">
+                                                <form action="{{ route('admin.roles.destroy', $role) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger remove-item-btn"><i class="ri-delete-bin-line"></i> Xoá</button>
+                                                    <button type="button" class="btn btn-sm btn-danger confirm-delete"><i class="ri-delete-bin-line"></i> Xoá</button>
                                                 </form>
                                             </div>
                                             @endcan
