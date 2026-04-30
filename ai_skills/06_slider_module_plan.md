@@ -1,82 +1,75 @@
 # SKILL 6: SLIDER MODULE (SHOFY/RVMEDIA STANDARD)
 
-> **Tài liệu chuẩn hóa kiến trúc Slider chuyên nghiệp** | Dựa trên phân tích Shofy/RvMedia, áp dụng cho EduQuiz (Laravel 13).
+> **Tài liệu chuẩn hóa kiến trúc Slider chuyên nghiệp** | Cấp độ: Senior Backend Architect | Áp dụng cho EduQuiz (Laravel 13).
 
 ---
 
-## 🎯 1. Thiết kế Cơ sở dữ liệu (Database Design)
+## 🎯 1. Thiết kế Cơ sở dữ liệu & Indexing (Database Design)
 
-Tách biệt "Cấu hình nhóm" và "Nội dung slide" để tối ưu hóa quản lý và mở rộng.
+Tối ưu hóa hiệu năng truy vấn và khả năng tùy biến động.
 
-### Bảng `sliders` (Nhóm Slider)
+### Bảng `sliders` (Cấu hình nhóm)
 - `id`: Primary Key (ULID/ID)
-- `name`: Tên slider (ví dụ: "Trang chủ - Banner chính")
-- `key`: Chuỗi định danh duy nhất (ví dụ: `home-main-slider`) -> **BẮT BUỘC dùng key để gọi ở Frontend**.
-- `description`: Mô tả ngắn (tùy chọn).
-- `status`: Trạng thái (`active`, `inactive`).
-- `created_at`, `updated_at`.
+- `name`: Tên slider.
+- `key`: **Unique Key (UK)** - Chuỗi định danh (ví dụ: `home-main-slider`).
+- `settings`: **JSON** - Lưu cấu hình Swiper (autoplay, speed, pagination, effect...).
+- `status`: Enum (`active`, `inactive`).
+- *Index:* `key` (Unique).
 
-### Bảng `slider_items` (Chi tiết từng Slide)
-- `id`: Primary Key (ULID/ID)
-- `slider_id`: Foreign Key liên kết với bảng `sliders`.
-- `title`: Tiêu đề hiển thị trên slide (hỗ trợ SEO).
-- `image`: Đường dẫn ảnh (phải liên kết với Media Manager nếu có).
-- `link`: URL điều hướng khi click (ví dụ: `/products/abc`).
-- `description`: Nội dung mô tả ngắn trên slide.
-- `order`: Thứ tự sắp xếp (mặc định 0).
-- `status`: Trạng thái (`active`, `inactive`).
-- `created_at`, `updated_at`.
+### Bảng `slider_items` (Nội dung slide)
+- `id`: Primary Key.
+- `slider_id`: **Foreign Key** liên kết `sliders`.
+- `title`, `image`, `link`, `description`.
+- `order`: Integer - Thứ tự sắp xếp.
+- `status`: Enum (`active`, `inactive`).
+- *Index:* `slider_id`, `order` (Để tối ưu câu lệnh `ORDER BY`).
 
 ---
 
-## 🛠️ 2. Quy trình Quản trị (Admin Workflow - UX/UI)
+## 🛠️ 2. Kiến trúc Backend (Laravel Standards)
 
-### Trang Danh sách (Index)
-- Hiển thị danh sách các **Slider Group**.
-- Tìm kiếm theo `name` hoặc `key`.
+### A. Request Validation (Clean Code)
+Sử dụng Form Request để tách biệt logic kiểm tra dữ liệu.
+```php
+public function rules(): array {
+    return [
+        'name' => 'required|string|max:255',
+        'key'  => 'required|string|unique:sliders,key,' . $this->route('slider')?->id,
+        'status' => 'required|in:active,inactive',
+        'settings' => 'nullable|array',
+    ];
+}
+```
 
-### Trang Chỉnh sửa (Edit Slider Group - Single Page Management)
-- **Khu vực 1 (Thông tin chung):** Sửa Name, Key, Status của nhóm.
-- **Khu vực 2 (Danh sách Items):** 
-  - Hiển thị Table các Slide Items thuộc nhóm đó.
-  - **Modal Form:** Nút "Thêm Slide" hoặc "Sửa" sẽ mở Modal (không chuyển trang).
-  - **Kéo thả (Sortable):** Sử dụng `Sortable.js` để thay đổi thứ tự trực tiếp trên bảng.
-  - **Lưu thứ tự:** Hiện nút "Save Sorting" sau khi kéo thả để cập nhật cột `order` qua AJAX.
-
----
-
-## ⚙️ 3. Logic xử lý (Backend Logic)
-
-- **Query tối ưu:** Luôn load `slider_items` kèm theo `sliders` và sắp xếp theo `order ASC`.
-- **Hàm hỗ trợ (Helper/Service):**
-  ```php
-  function get_slider_by_key($key) {
-      return Slider::where('key', $key)
-                   ->where('status', 'active')
-                   ->with(['items' => function($q) {
-                       $q->where('status', 'active')->orderBy('order', 'asc');
-                   }])
-                   ->first();
-  }
-  ```
-- **Xóa Cascading:** Khi xóa `sliders`, tự động xóa sạch `slider_items` liên quan để tránh rác database.
-- **Caching:** Cache kết quả `get_slider_by_key`. Xóa cache khi có bất kỳ thay đổi nào trong Admin.
+### B. Service Pattern & Cache Management
+Xử lý logic nghiệp vụ tập trung tại `SliderService`.
+- **Cache Invalidation:** Sử dụng `Cache::tags(['sliders'])` để xóa cache ngay khi dữ liệu thay đổi.
+- **Atomic Updates:** Đảm bảo việc cập nhật thứ tự (Sortable) diễn ra nhanh chóng qua AJAX.
 
 ---
 
-## 🎨 4. Tích hợp Frontend (Frontend Integration)
+## 🖥️ 3. Quản trị UX (Master-Detail Management)
 
-### Thư viện khuyến nghị: **Swiper.js** (Hiện đại, hiệu năng cao).
+### Quy trình Chỉnh sửa (Single Page Management):
+1. **Form Chính:** Sửa thông tin `sliders` (Name, Key, Settings).
+2. **Khu vực Items:**
+   - Hiển thị danh sách items dạng Table.
+   - **Modal Pop-up:** Thêm/Sửa từng item qua Modal để giữ ngữ cảnh trang (không chuyển hướng).
+   - **Drag & Drop:** Tích hợp `Sortable.js`. Sau khi kéo thả, gửi mảng ID lên API để cập nhật cột `order`.
 
-### Quy tắc hiển thị:
-- **Lazy Loading:** Chỉ load ảnh slide đầu tiên ngay lập tức. Các slide tiếp theo dùng `loading="lazy"`.
-- **Responsive Images:** Sử dụng các phiên bản ảnh nhỏ hơn cho Mobile (nếu hệ thống Media hỗ trợ resize).
-- **Accessibility (A11y):** Luôn điền thuộc tính `alt` cho ảnh từ trường `title`.
-- **Cấu hình động:** Nếu cần, có thể thêm trường `settings` (JSON) vào bảng `sliders` để lưu cấu hình Swiper (tốc độ, hiệu ứng transition).
+---
+
+## 🎨 4. Tích hợp Frontend (Performance & SEO)
+
+### Thư viện: **Swiper.js**
+- **Cấu hình Động:** Lấy dữ liệu từ cột `settings` (JSON) để khởi tạo Swiper.
+- **Lazy Loading:** `loading="lazy"` cho các slide không phải là slide đầu tiên.
+- **SEO:** Tự động điền `alt` từ `title` và `title` từ `description` (nếu có).
 
 ---
 
 ## ⚠️ CÁC LỖI CẦN TRÁNH
-1. Gọi slider bằng `id` cứng trong code Frontend (Gây lỗi khi migrate dữ liệu).
-2. Không xử lý upload ảnh tập trung qua Media Manager.
-3. Chuyển trang quá nhiều khi quản lý từng item (Gây ức chế cho người dùng).
+1. **N+1 Query:** Luôn sử dụng `with('items')` khi lấy Slider.
+2. **Hard-coded Settings:** Tránh viết cứng cấu hình slider trong file JS/Blade; hãy tận dụng cột `settings`.
+3. **No Cache Invalidation:** Quên xóa cache khiến thay đổi trong Admin không hiển thị ở Frontend.
+4. **Missing Index:** Thiếu index ở cột `order` khiến việc sắp xếp bị chậm khi dữ liệu lớn.

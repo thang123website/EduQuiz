@@ -177,7 +177,7 @@
 
                 <div class="media-grid" id="mediaGrid">
                     @foreach($files as $file)
-                    <div class="media-card" data-id="{{ $file->id }}" data-name="{{ $file->name }}">
+                    <div class="media-card" data-id="{{ $file->id }}" data-name="{{ $file->name }}" data-path="{{ $file->url }}" data-full-url="{{ $file->full_url }}">
                         <div class="form-check media-checkbox">
                             <input class="form-check-input file-checkbox" type="checkbox" value="{{ $file->id }}">
                         </div>
@@ -273,6 +273,7 @@ const BULK_DELETE_URL = '{{ route("admin.media.bulk-destroy") }}';
 const CSRF_TOKEN      = '{{ csrf_token() }}';
 const FOLDER_ID       = '{{ $folderId ?? "" }}';
 const DELETE_BASE     = '{{ url("admin/media") }}';
+const IS_PICKER       = new URLSearchParams(window.location.search).get('picker') == '1';
 
 // ===== Tìm kiếm =====
 document.getElementById('searchInput').addEventListener('input', function(e) {
@@ -368,6 +369,8 @@ function appendMediaCard(file, url) {
     const card = document.createElement('div');
     card.className = 'media-card';
     card.dataset.name = file.name;
+    card.dataset.path = file.url;
+    card.dataset.fullUrl = url;
     
     const ext = file.url.split('.').pop().toLowerCase();
     let previewHtml = '';
@@ -529,6 +532,18 @@ document.addEventListener('click', function(e) {
     const checkbox = e.target.closest('.media-checkbox');
     
     if (card && !actions && !checkbox) {
+        if (IS_PICKER) {
+            if (window.opener && window.opener.mediaPickerCallback) {
+                window.opener.mediaPickerCallback({
+                    id: card.dataset.id,
+                    name: card.dataset.name,
+                    path: card.dataset.path,
+                    full_url: card.dataset.fullUrl
+                });
+            }
+            return;
+        }
+
         const cb = card.querySelector('.file-checkbox');
         cb.checked = !cb.checked;
         updateSelectionUI();

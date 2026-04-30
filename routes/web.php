@@ -33,4 +33,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
         Route::post('/bulk-delete', [\App\Http\Controllers\Admin\MediaController::class, 'bulkDestroy'])->name('bulk-destroy');
         Route::post('/folders',   [\App\Http\Controllers\Admin\MediaController::class, 'createFolder'])->name('folders.store');
     });
+
+    // Slider Manager
+    Route::resource('sliders', \App\Http\Controllers\Admin\SliderController::class);
+    Route::prefix('sliders/{slider}/items')->name('sliders.items.')->group(function () {
+        Route::post('/',          [\App\Http\Controllers\Admin\SliderController::class, 'storeItem'])->name('store');
+        Route::put('/{item}',     [\App\Http\Controllers\Admin\SliderController::class, 'updateItem'])->name('update');
+        Route::delete('/{item}',  [\App\Http\Controllers\Admin\SliderController::class, 'destroyItem'])->name('destroy');
+        Route::post('/reorder',   [\App\Http\Controllers\Admin\SliderController::class, 'reorderItems'])->name('reorder');
+    });
 });

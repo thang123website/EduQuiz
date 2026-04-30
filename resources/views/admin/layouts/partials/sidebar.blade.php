@@ -80,6 +80,15 @@
                 @endcan
                 @endcanany
 
+                @can('slider.view')
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Nội dung Website</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.sliders.*') ? 'active' : '' }}" href="{{ route('admin.sliders.index') }}">
+                        <i class="ri-slideshow-line"></i> <span>Slider / Banner</span>
+                    </a>
+                </li>
+                @endcan
+
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">

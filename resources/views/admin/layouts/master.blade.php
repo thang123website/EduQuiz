@@ -77,23 +77,6 @@
                 }
             }
         };
-
-        // Global Delete Confirmation Handler
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.confirm-delete')) {
-                e.preventDefault();
-                const btn = e.target.closest('.confirm-delete');
-                const form = btn.closest('form');
-                const modalElement = document.getElementById('deleteRecordModal');
-                const modal = new bootstrap.Modal(modalElement);
-                
-                document.getElementById('confirm-delete-btn').onclick = function() {
-                    form.submit();
-                };
-                
-                modal.show();
-            }
-        });
     </script>
 
     @include('admin.layouts.vendor-scripts')

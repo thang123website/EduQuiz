@@ -12,5 +12,34 @@
 
 @stack('scripts')
 
+<script>
+    // Global delete confirmation handler
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.confirm-delete')) {
+            e.preventDefault();
+            const btn = e.target.closest('.confirm-delete');
+            const form = btn.closest('form');
+            if (!form) return;
+
+            const modalEl = document.getElementById('deleteRecordModal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                const confirmBtn = document.getElementById('confirm-delete-btn');
+                if (confirmBtn) {
+                    confirmBtn.onclick = function () {
+                        form.submit();
+                    };
+                }
+            } else {
+                if (confirm('Bạn có chắc chắn muốn xóa?')) {
+                    form.submit();
+                }
+            }
+        }
+    });
+</script>
+
 <!-- App js -->
 <script src="{{ asset('assets/admin/js/app.js') }}?v=1.0.3"></script>
