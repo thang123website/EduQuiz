@@ -533,13 +533,14 @@ document.addEventListener('click', function(e) {
     
     if (card && !actions && !checkbox) {
         if (IS_PICKER) {
-            if (window.opener && window.opener.mediaPickerCallback) {
+            if (window.opener && typeof window.opener.mediaPickerCallback === 'function') {
                 window.opener.mediaPickerCallback({
                     id: card.dataset.id,
                     name: card.dataset.name,
                     path: card.dataset.path,
                     full_url: card.dataset.fullUrl
                 });
+                window.close();
             }
             return;
         }

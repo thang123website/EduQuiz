@@ -73,7 +73,11 @@
                                     <i class="ri-image-2-line me-1"></i> Chọn ảnh đại diện
                                 </button>
                                 <div id="imagePreview" class="picker-preview-wrap {{ old('image') ? '' : 'd-none' }}">
-                                    <img src="{{ old('image') }}" id="imgPreviewDisplay" alt="Preview" class="img-fluid rounded border" style="max-height: 200px;">
+                                    @php
+                                        $blogImg = old('image');
+                                        $blogDisplayUrl = get_image_url(old('image'));
+                                    @endphp
+                                    <img src="{{ $blogDisplayUrl }}" id="imgPreviewDisplay" alt="Preview" class="img-fluid rounded border" style="max-height: 200px;">
                                     <button type="button" class="btn btn-sm btn-danger mt-1 d-block w-100" onclick="removeImage()">
                                         <i class="ri-delete-bin-line me-1"></i> Xóa ảnh
                                     </button>

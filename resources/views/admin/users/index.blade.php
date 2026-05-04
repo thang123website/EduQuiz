@@ -46,6 +46,41 @@
                     @endcan
                 </div><!-- end card header -->
 
+                <div class="card-body border-bottom-dashed border-bottom">
+                    <form action="{{ route('admin.users.index') }}" method="GET">
+                        <div class="row g-3">
+                            <div class="col-xl-6">
+                                <div class="search-box">
+                                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm tên, email..." value="{{ request('search') }}">
+                                    <i class="ri-search-line search-icon"></i>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xl-3">
+                                <div>
+                                    <select class="form-control" name="role_id">
+                                        <option value="">Tất cả vai trò</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>{{ $role->caption }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xl-3">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary w-100"> <i class="ri-equalizer-fill me-1 align-bottom"></i> Hiển thị kết quả</button>
+                                    @if(request()->has('search') || request()->has('role_id'))
+                                        <a href="{{ route('admin.users.index') }}" class="btn btn-light w-100">Xoá lọc</a>
+                                    @endif
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                        <!--end row-->
+                    </form>
+                </div>
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-nowrap align-middle mb-0">
@@ -77,7 +112,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
-                                                <img src="{{ asset('assets/admin/images/users/avatar-1.jpg') }}" alt="" class="avatar-xxs rounded-circle image_src object-fit-cover">
+                                                <img src="{{ $user->avatar_url }}" alt="" class="avatar-xxs rounded-circle image_src object-fit-cover">
                                             </div>
                                             <div class="flex-grow-1 ms-2 name">{{ $user->name }}</div>
                                         </div>

@@ -7,6 +7,8 @@
 <script src="{{ asset('assets/admin/libs/feather-icons/feather.min.js') }}"></script>
 <script src="{{ asset('assets/admin/js/pages/plugins/lord-icon-2.1.0.js') }}"></script>
 <script src="{{ asset('assets/admin/js/plugins.js') }}?v=1.0.3"></script>
+<!-- SweetAlert2 JS -->
+<script src="{{ asset('assets/admin/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <!-- Toastify JS -->
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
@@ -23,7 +25,8 @@
 
             const modalEl = document.getElementById('deleteRecordModal');
             if (modalEl) {
-                const modal = new bootstrap.Modal(modalEl);
+                // Sử dụng getOrCreateInstance để tránh tạo nhiều backdrop
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
                 modal.show();
 
                 const confirmBtn = document.getElementById('confirm-delete-btn');

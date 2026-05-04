@@ -1,20 +1,20 @@
 <div class="app-menu navbar-menu">
     <!-- LOGO -->
     <div class="navbar-brand-box">
-        <a href="#" class="logo logo-dark">
+        <a href="{{ route('admin.dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_favicon')) ?: asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('assets/admin/images/logo-dark.png') }}" alt="" height="17">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_dark')) ?: asset('assets/admin/images/logo-dark.png') }}" alt="" height="22">
             </span>
         </a>
-        <a href="#" class="logo logo-light">
+        <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_favicon')) ?: asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('assets/admin/images/logo-light.png') }}" alt="" height="17">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_light')) ?: asset('assets/admin/images/logo-light.png') }}" alt="" height="22">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
@@ -89,6 +89,28 @@
                 </li>
                 @endcan
 
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Thông báo</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.notifications.*') ? 'true' : 'false' }}" aria-controls="sidebarNotifications">
+                        <i class="ri-notification-3-line"></i> <span>Thông báo</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('admin.notifications.*') || request()->routeIs('notifications.*') ? 'show' : '' }}" id="sidebarNotifications">
+                        <ul class="nav nav-sm flex-column">
+                            @if(auth()->user()->role_name == 'Quản trị viên' || auth()->user()->role_name == 'admin')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}"> Lịch sử gửi </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.notifications.create') }}" class="nav-link {{ request()->routeIs('admin.notifications.create') ? 'active' : '' }}"> Gửi thông báo </a>
+                            </li>
+                            @endif
+                            <li class="nav-item">
+                                <a href="{{ route('notifications.userList') }}" class="nav-link {{ request()->routeIs('notifications.userList') ? 'active' : '' }}"> Thông báo của tôi </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
@@ -96,6 +118,9 @@
                     </a>
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.settings.*') ? 'show' : '' }}" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.general') }}" class="nav-link {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}"> Cấu hình Website </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}"> Cấu hình Media </a>
                             </li>

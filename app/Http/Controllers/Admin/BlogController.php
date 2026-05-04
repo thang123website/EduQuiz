@@ -11,13 +11,42 @@ use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('blog.view');
-        $blogs = Blog::with(['category', 'author'])
-            ->latest()
-            ->paginate(15);
-        return view('admin.blog.index', compact('blogs'));
+        
+        $query = Blog::with(['category', 'author']);
+
+        // Tìm kiếm tiêu đề
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        // Lọc theo danh mục
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Lọc theo trạng thái
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Lọc theo khoảng ngày
+        if ($request->filled('date')) {
+            $dates = explode(' to ', $request->date);
+            if (count($dates) == 2) {
+                $query->whereDate('created_at', '>=', $dates[0])
+                      ->whereDate('created_at', '<=', $dates[1]);
+            } else {
+                $query->whereDate('created_at', $dates[0]);
+            }
+        }
+
+        $blogs = $query->latest()->paginate(15)->withQueryString();
+        $categories = BlogCategory::getTree();
+
+        return view('admin.blog.index', compact('blogs', 'categories'));
     }
 
     public function create()

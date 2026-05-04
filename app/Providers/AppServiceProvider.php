@@ -20,9 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $helperPath = app_path('Helpers/NavigationHelper.php');
-        if (file_exists($helperPath)) {
-            require_once $helperPath;
+        $helpers = ['NavigationHelper.php', 'MediaHelper.php'];
+        foreach ($helpers as $helper) {
+            $path = app_path('Helpers/' . $helper);
+            if (file_exists($path)) {
+                require_once $path;
+            }
         }
     }
 

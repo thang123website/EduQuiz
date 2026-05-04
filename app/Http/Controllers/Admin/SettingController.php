@@ -15,6 +15,21 @@ use Symfony\Component\Mime\Email;
 
 class SettingController extends Controller
 {
+    // ─── General Website Settings ──────────────────────────────────────────────
+    
+    public function general()
+    {
+        if (Gate::has('setting.manage')) {
+            Gate::authorize('setting.manage');
+        }
+
+        $settings = Setting::where('group', 'general')->get()->groupBy('group');
+        // If we want more granular control, we can just pass all and handle in view
+        $settings = Setting::where('group', 'general')->get();
+        
+        return view('admin.settings.general', compact('settings'));
+    }
+
     // ─── Media Settings ────────────────────────────────────────────────────────
 
     public function index()

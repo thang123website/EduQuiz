@@ -11,12 +11,28 @@ use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Kiểm tra tính năng render_diffs trong chat
         Gate::authorize('users.view');
-        $users = User::with('role')->latest()->paginate(10);
-        return view('admin.users.index', compact('users'));
+        
+        $query = User::with('role');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role_id')) {
+            $query->where('role_id', $request->role_id);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+        $roles = Role::all();
+
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function create()
@@ -34,7 +50,14 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'nullable|exists:roles,id',
-            'status' => 'required|string|in:active,blocked'
+            'status' => 'required|string|in:active,blocked',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'address' => 'nullable|string',
+            'gender' => 'nullable|in:male,female,other',
+            'dob' => 'nullable|date',
+            'avatar' => 'nullable|string',
+            'cover_photo' => 'nullable|string',
         ]);
 
         $role_name = null;
@@ -48,7 +71,14 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
             'role_name' => $role_name,
-            'status' => $request->status
+            'status' => $request->status,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'address' => $request->address,
+            'gender' => $request->gender,
+            'dob' => $request->dob,
+            'avatar' => $request->avatar,
+            'cover_photo' => $request->cover_photo,
         ]);
 
         return redirect()->route('admin.users.index')->with('success', 'Thêm người dùng thành công');
@@ -69,7 +99,14 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'nullable|exists:roles,id',
-            'status' => 'required|string|in:active,blocked'
+            'status' => 'required|string|in:active,blocked',
+            'latitude' => 'nullable|string',
+            'longitude' => 'nullable|string',
+            'address' => 'nullable|string',
+            'gender' => 'nullable|in:male,female,other',
+            'dob' => 'nullable|date',
+            'avatar' => 'nullable|string',
+            'cover_photo' => 'nullable|string',
         ]);
 
         $role_name = null;
@@ -82,7 +119,14 @@ class UserController extends Controller
             'email' => $request->email,
             'role_id' => $request->role_id,
             'role_name' => $role_name,
-            'status' => $request->status
+            'status' => $request->status,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'address' => $request->address,
+            'gender' => $request->gender,
+            'dob' => $request->dob,
+            'avatar' => $request->avatar,
+            'cover_photo' => $request->cover_photo,
         ];
 
         if ($request->filled('password')) {

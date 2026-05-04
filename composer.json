@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.3",
         "intervention/image": "^4.0",
+        "kreait/laravel-firebase": "^7.1",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },
@@ -26,7 +27,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/NavigationHelper.php"
+            "app/Helpers/NavigationHelper.php",
+            "app/Helpers/helper.php"
         ]
     },
     "autoload-dev": {

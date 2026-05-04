@@ -36,15 +36,41 @@
                     </div>
                 </div>
                 <div class="card-body border border-dashed border-end-0 border-start-0">
-                    <form>
+                    <form action="{{ route('admin.sliders.index') }}" method="GET">
                         <div class="row g-3">
-                            <div class="col-xxl-5 col-sm-6">
+                            <div class="col-xxl-4 col-sm-6">
                                 <div class="search-box">
-                                    <input type="text" class="form-control search" placeholder="Tìm kiếm slider...">
+                                    <input type="text" name="search" class="form-control search" placeholder="Tìm kiếm tên slider hoặc key..." value="{{ request('search') }}">
                                     <i class="ri-search-line search-icon"></i>
                                 </div>
                             </div>
                             <!--end col-->
+                            <div class="col-xxl-2 col-sm-6">
+                                <div>
+                                    <select class="form-control" name="status">
+                                        <option value="">Trạng thái</option>
+                                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Hoạt động</option>
+                                        <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Tắt</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-3 col-sm-6">
+                                <div>
+                                    <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true" placeholder="Chọn khoảng ngày" value="{{ request('date') }}">
+                                </div>
+                            </div>
+                            <!--end col-->
+                            <div class="col-xxl-3 col-sm-6">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-equalizer-fill me-1 align-bottom"></i> Hiển thị kết quả
+                                    </button>
+                                    @if(request()->anyFilled(['search', 'status', 'date']))
+                                        <a href="{{ route('admin.sliders.index') }}" class="btn btn-light w-100">Xoá lọc</a>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                         <!--end row-->
                     </form>

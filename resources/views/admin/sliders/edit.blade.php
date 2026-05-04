@@ -101,8 +101,8 @@
                                     </td>
                                     <td>
                                         <div class="avatar-md bg-light rounded p-1">
-                                            @if($item->image)
-                                                <img src="{{ $item->image }}" alt="" class="img-fluid d-block rounded">
+                                            @if($item->image_url)
+                                                <img src="{{ $item->image_url }}" alt="" class="img-fluid d-block rounded">
                                             @else
                                                 <i class="ri-image-line fs-24 text-muted d-flex align-items-center justify-content-center h-100"></i>
                                             @endif
@@ -369,7 +369,7 @@
             document.getElementById('item-image').value = itemData.image ?? '';
             
             if (itemData.image) {
-                document.getElementById('img-preview').src = itemData.image;
+                document.getElementById('img-preview').src = itemData.image_url || itemData.image;
                 document.getElementById('img-preview').classList.remove('d-none');
                 document.getElementById('img-placeholder').classList.add('d-none');
             }

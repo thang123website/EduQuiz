@@ -38,6 +38,55 @@
                     @endcan
                 </div>
 
+                <div class="card-body border-bottom-dashed border-bottom">
+                    <form action="{{ route('admin.blog.index') }}" method="GET">
+                        <div class="row g-3">
+                            <div class="col-xl-3">
+                                <div class="search-box">
+                                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm tiêu đề..." value="{{ request('search') }}">
+                                    <i class="ri-search-line search-icon"></i>
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
+                                <div>
+                                    <select class="form-control" name="category_id">
+                                        <option value="">Tất cả danh mục</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ str_repeat('— ', $category->level) . $category->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
+                                <div>
+                                    <select class="form-control" name="status">
+                                        <option value="">Tất cả trạng thái</option>
+                                        <option value="publish" {{ request('status') == 'publish' ? 'selected' : '' }}>Đã xuất bản</option>
+                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-3">
+                                <div>
+                                    <input type="text" name="date" class="form-control" data-provider="flatpickr" data-date-format="Y-m-d" data-range-date="true" placeholder="Chọn khoảng ngày" value="{{ request('date') }}">
+                                </div>
+                            </div>
+                            <div class="col-xl-2">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="ri-equalizer-fill me-1 align-bottom"></i> Hiển thị kết quả
+                                    </button>
+                                    @if(request()->anyFilled(['search', 'category_id', 'status', 'date']))
+                                        <a href="{{ route('admin.blog.index') }}" class="btn btn-light w-100">Xoá</a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-nowrap align-middle mb-0">
@@ -57,8 +106,8 @@
                                 @forelse($blogs as $blog)
                                 <tr>
                                     <td>
-                                        @if($blog->image)
-                                            <img src="{{ Storage::url($blog->image) }}" alt="{{ $blog->title }}" class="rounded" style="width: 60px; height: 45px; object-fit: cover;">
+                                        @if($blog->image_url)
+                                            <img src="{{ $blog->image_url }}" alt="{{ $blog->title }}" class="rounded" style="width: 60px; height: 45px; object-fit: cover;">
                                         @else
                                             <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 45px;">
                                                 <i class="ri-image-line text-muted"></i>

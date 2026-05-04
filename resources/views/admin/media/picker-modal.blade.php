@@ -193,6 +193,7 @@
 let _pickerTargetInput = null;
 let _pickerTargetPreview = null;
 let _pickerSelectedUrl = null;
+let _pickerSelectedFullUrl = null;
 let _pickerCurrentFolder = '';
 let _pickerSearchQuery = '';
 
@@ -240,11 +241,12 @@ function renderPickerGrid(files) {
 
     files.forEach(file => {
         const card = document.createElement('div');
-        card.className = `picker-media-card ${file.full_url === _pickerSelectedUrl ? 'selected' : ''}`;
+        card.className = `picker-media-card ${file.url === _pickerSelectedUrl ? 'selected' : ''}`;
         card.onclick = () => {
             document.querySelectorAll('.picker-media-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
-            _pickerSelectedUrl = file.full_url;
+            _pickerSelectedUrl = file.url;
+            _pickerSelectedFullUrl = file.full_url;
             document.getElementById('pickerConfirmBtn').disabled = false;
             document.getElementById('pickerSelectedInfo').innerHTML = `<i class="ri-check-line text-success me-1"></i> Đang chọn: <strong>${file.name}</strong>`;
         };
@@ -295,7 +297,7 @@ function confirmMediaSelection() {
     if (_pickerTargetPreview) {
         const preview = document.getElementById(_pickerTargetPreview);
         if (preview) {
-            preview.src = _pickerSelectedUrl;
+            preview.src = _pickerSelectedFullUrl;
             preview.style.display = 'block';
             preview.closest('.picker-preview-wrap')?.classList.remove('d-none');
         }

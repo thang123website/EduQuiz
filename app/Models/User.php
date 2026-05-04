@@ -11,12 +11,16 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role_id', 'role_name', 'status'])]
+#[Fillable(['name', 'email', 'password', 'role_id', 'role_name', 'status', 'latitude', 'longitude', 'address', 'gender', 'dob', 'avatar', 'cover_photo'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasUlids;
+
+    protected $appends = [
+        'avatar_url'
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -41,6 +45,18 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role_id && $this->role && $this->role->is_admin;
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return get_image_url($this->avatar);
+        }
+
+        return route('default-avatar', [
+            'id' => $this->id,
+            'name' => $this->name
+        ]);
     }
 
     public function hasPermission($permissionName)

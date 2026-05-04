@@ -26,6 +26,14 @@ class Blog extends Model
     ];
 
     /**
+     * URL ảnh đầy đủ để hiển thị (xử lý cả đường dẫn tương đối và tuyệt đối)
+     */
+    public function getImageUrlAttribute()
+    {
+        return get_image_url($this->image);
+    }
+
+    /**
      * Danh mục của bài viết
      */
     public function category()

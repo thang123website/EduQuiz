@@ -17,6 +17,16 @@ class SliderItem extends Model
         'status',
     ];
 
+    protected $appends = ['image_url'];
+
+    /**
+     * URL ảnh đầy đủ để hiển thị
+     */
+    public function getImageUrlAttribute()
+    {
+        return get_image_url($this->image);
+    }
+
     /**
      * Nhóm slider mà item này thuộc về.
      */

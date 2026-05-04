@@ -16,10 +16,36 @@ class SliderController extends Controller
 
     // ─── Slider Group CRUD ────────────────────────────────────────────────────
 
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('slider.view');
-        $sliders = Slider::withCount('items')->latest()->paginate(15);
+        
+        $query = Slider::withCount('items');
+
+        // Tìm kiếm tên/key
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('key', 'like', '%' . $request->search . '%');
+        }
+
+        // Lọc theo trạng thái
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Lọc theo khoảng ngày
+        if ($request->filled('date')) {
+            $dates = explode(' to ', $request->date);
+            if (count($dates) == 2) {
+                $query->whereDate('created_at', '>=', $dates[0])
+                      ->whereDate('created_at', '<=', $dates[1]);
+            } else {
+                $query->whereDate('created_at', $dates[0]);
+            }
+        }
+
+        $sliders = $query->latest()->paginate(15)->withQueryString();
+        
         return view('admin.sliders.index', compact('sliders'));
     }
 

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>@yield('title') | EduQuiz Admin</title>
+    <title>@yield('title') | {{ \App\Models\Setting::get('site_name', 'EduQuiz') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="EduQuiz Admin Dashboard" name="description" />
     <script>var PATH_ROOT = "{{ url('/') }}";</script>

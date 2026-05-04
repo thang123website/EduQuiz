@@ -15,7 +15,15 @@ class MediaFile extends Model
         'url', 'mime_type', 'size', 'type', 'visibility',
     ];
 
-    protected $appends = ['full_url', 'thumb_url', 'formatted_size'];
+    protected $appends = ['full_url', 'thumb_url', 'path', 'formatted_size'];
+
+    /**
+     * Đường dẫn tương đối (không có domain) để lưu vào DB
+     */
+    public function getPathAttribute(): string
+    {
+        return '/storage/' . $this->url;
+    }
 
     public function folder()
     {
@@ -32,7 +40,7 @@ class MediaFile extends Model
      */
     public function getFullUrlAttribute(): string
     {
-        return Storage::disk('public')->url($this->url);
+        return get_image_url($this->url);
     }
 
     /**
