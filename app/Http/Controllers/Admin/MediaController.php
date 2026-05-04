@@ -81,7 +81,7 @@ class MediaController extends Controller
     public function files(Request $request)
     {
         Gate::authorize('media.view');
-
+        
         $files = MediaFile::with('folder')
             ->when($request->folder_id, fn($q) => $q->where('folder_id', $request->folder_id))
             ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
@@ -89,6 +89,16 @@ class MediaController extends Controller
             ->paginate(30);
 
         return response()->json($files);
+    }
+
+    /**
+     * API: Lấy danh sách thư mục cho Modal Picker
+     */
+    public function folders()
+    {
+        Gate::authorize('media.view');
+        $folders = MediaFolder::all();
+        return response()->json($folders);
     }
 
     /**

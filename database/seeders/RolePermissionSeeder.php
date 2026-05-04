@@ -41,6 +41,9 @@ class RolePermissionSeeder extends Seeder {
             ['name' => 'media.view',            'caption' => 'Xem thư viện media',        'group' => 'media'],
             ['name' => 'media.upload',          'caption' => 'Upload file media',          'group' => 'media'],
             ['name' => 'media.delete',          'caption' => 'Xoá file media',             'group' => 'media'],
+            // Notification permissions
+            ['name' => 'notifications.history', 'caption' => 'Xem lịch sử thông báo',     'group' => 'notifications'],
+            ['name' => 'notifications.create',  'caption' => 'Gửi thông báo hệ thống',    'group' => 'notifications'],
         ];
 
         foreach ($sections as $sec) {

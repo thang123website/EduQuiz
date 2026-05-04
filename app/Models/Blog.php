@@ -48,4 +48,19 @@ class Blog extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
+    /**
+     * Danh sách bình luận của bài viết
+     */
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->whereNull('parent_id')->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Chỉ lấy các bình luận đã duyệt
+     */
+    public function activeComments()
+    {
+        return $this->comments()->where('status', 'active');
+    }
 }

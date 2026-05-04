@@ -8,6 +8,7 @@ use App\Notifications\GeneralNotification;
 use App\Services\NotificationAudienceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Gate;
 
 class NotificationController extends Controller
 {
@@ -20,6 +21,8 @@ class NotificationController extends Controller
 
     public function index(Request $request)
     {
+        Gate::authorize('notifications.history');
+
         $query = \App\Models\NotificationHistory::with('sender');
 
         // Tìm kiếm tiêu đề/nội dung
@@ -60,6 +63,8 @@ class NotificationController extends Controller
 
     public function create(Request $request)
     {
+        Gate::authorize('notifications.create');
+
         $audienceTypes = $this->audienceService->getAvailableTypes();
         $users = User::orderBy('name')->get(); 
         
@@ -73,6 +78,8 @@ class NotificationController extends Controller
 
     public function store(Request $request)
     {
+        Gate::authorize('notifications.create');
+
         try {
             $request->validate([
                 'title' => 'required|string|max:255',
@@ -123,6 +130,8 @@ class NotificationController extends Controller
 
     public function destroy($id)
     {
+        Gate::authorize('notifications.history');
+
         try {
             $history = \App\Models\NotificationHistory::findOrFail($id);
             

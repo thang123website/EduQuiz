@@ -81,6 +81,7 @@ class GeneralNotification extends Notification implements ShouldQueue
             'url' => $this->data['url'] ?? null,
             'type' => $this->data['type'] ?? 'general',
             'sender_id' => $this->data['sender_id'] ?? null,
+            'history_id' => $this->data['history_id'] ?? null,
         ];
     }
 

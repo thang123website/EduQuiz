@@ -186,6 +186,30 @@
     background: #f8f9fa;
     border-bottom: 1px solid #f3f3f9;
 }
+.picker-delete-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(240, 101, 72, 0.9);
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    z-index: 10;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+.picker-media-card:hover .picker-delete-btn {
+    display: flex;
+}
+.picker-delete-btn:hover {
+    background: #f06548;
+    transform: scale(1.1);
+}
 </style>
 
 @push('scripts')
@@ -196,6 +220,8 @@ let _pickerSelectedUrl = null;
 let _pickerSelectedFullUrl = null;
 let _pickerCurrentFolder = '';
 let _pickerSearchQuery = '';
+let _pickerCurrentPage = 1;
+const _pickerDeleteBase = '{{ url("admin/media") }}';
 
 function openMediaPicker(inputId, previewId = null) {
     _pickerTargetInput = inputId;
@@ -205,7 +231,49 @@ function openMediaPicker(inputId, previewId = null) {
     const modal = new bootstrap.Modal(document.getElementById('mediaPickerModal'));
     modal.show();
     
-    loadPickerFiles(1);
+    loadPickerFolders(); // Load folders
+    loadPickerFiles(1);   // Load files
+}
+
+async function loadPickerFolders() {
+    try {
+        const res = await fetch('{{ route('admin.media.folders') }}', { headers: { 'Accept': 'application/json' } });
+        const folders = await res.json();
+        renderPickerFolders(folders);
+    } catch (e) {
+        console.error('Folder load error:', e);
+    }
+}
+
+function renderPickerFolders(folders) {
+    const list = document.getElementById('pickerFolderList');
+    // Save the "All" item
+    const allItem = list.querySelector('.picker-folder-item[data-id=""]');
+    
+    list.innerHTML = '';
+    if (allItem) {
+        allItem.onclick = () => {
+            document.querySelectorAll('.picker-folder-item').forEach(i => i.classList.remove('active'));
+            allItem.classList.add('active');
+            _pickerCurrentFolder = '';
+            loadPickerFiles(1);
+        };
+        list.appendChild(allItem);
+    }
+
+    folders.forEach(folder => {
+        const item = document.createElement('div');
+        item.className = `picker-folder-item ${_pickerCurrentFolder == folder.id ? 'active' : ''}`;
+        item.dataset.id = folder.id;
+        item.innerHTML = `<i class="ri-folder-2-fill me-2"></i> ${folder.name}`;
+        item.onclick = () => {
+            document.querySelectorAll('.picker-folder-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            _pickerCurrentFolder = folder.id;
+            loadPickerFiles(1);
+        };
+        list.appendChild(item);
+    });
 }
 
 async function loadPickerFiles(page = 1) {
@@ -214,7 +282,8 @@ async function loadPickerFiles(page = 1) {
     document.getElementById('pickerEmpty').style.display = 'none';
 
     try {
-        let url = `{{ route('admin.media.files') }}?page=${page}`;
+        _pickerCurrentPage = page;
+        let url = `${PATH_ROOT}/admin/media/files?page=${page}`;
         if (_pickerCurrentFolder) url += `&folder_id=${_pickerCurrentFolder}`;
         if (_pickerSearchQuery) url += `&search=${_pickerSearchQuery}`;
 
@@ -242,6 +311,8 @@ function renderPickerGrid(files) {
     files.forEach(file => {
         const card = document.createElement('div');
         card.className = `picker-media-card ${file.url === _pickerSelectedUrl ? 'selected' : ''}`;
+        card.dataset.id = file.id;
+        card.dataset.name = file.name;
         card.onclick = () => {
             document.querySelectorAll('.picker-media-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
@@ -266,6 +337,9 @@ function renderPickerGrid(files) {
         }
 
         card.innerHTML = `
+            <button type="button" class="picker-delete-btn" title="Xóa tệp" onclick="deletePickerFile(event)">
+                <i class="ri-delete-bin-fill"></i>
+            </button>
             ${previewHtml}
             <div class="picker-media-info">
                 <div class="picker-media-name" title="${file.name}">${file.name}</div>
@@ -341,6 +415,63 @@ async function pickerUploadFiles(files) {
         status.innerHTML = '';
         loadPickerFiles(1);
     }, 2000);
+}
+// Xóa tệp
+async function deletePickerFile(event) {
+    event.stopPropagation();
+    const card = event.currentTarget.closest('.picker-media-card');
+    const id = card.dataset.id;
+    const name = card.dataset.name;
+
+    Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: "Hành động này không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonClass: 'btn btn-primary w-xs me-2 mt-2',
+        cancelButtonClass: 'btn btn-danger w-xs mt-2',
+        confirmButtonText: 'Đúng, xóa nó!',
+        cancelButtonText: 'Hủy bỏ',
+        buttonsStyling: false,
+        showCloseButton: true
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`${_pickerDeleteBase}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && !data.error) {
+                    loadPickerFiles(_pickerCurrentPage || 1);
+                    Swal.fire({
+                        title: 'Đã xóa!',
+                        text: 'Tệp tin đã được loại bỏ khỏi hệ thống.',
+                        icon: 'success',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: data.message || 'Không thể xóa tệp này.',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false
+                    });
+                }
+            } catch (e) {
+                console.error('Delete error:', e);
+                Swal.fire('Lỗi', 'Lỗi kết nối máy chủ.', 'error');
+            }
+        }
+    });
 }
 </script>
 @endpush

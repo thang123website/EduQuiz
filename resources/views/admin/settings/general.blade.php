@@ -112,7 +112,7 @@
                                     </div>
                                     <input type="hidden" name="site_logo_dark" id="site_logo_dark" value="{{ \App\Models\Setting::get('site_logo_dark') }}">
                                     <button type="button" class="btn btn-sm btn-primary position-absolute top-0 end-0 m-n2 rounded-circle shadow" 
-                                            onclick="openMediaPicker('site_logo_dark')">
+                                            onclick="openMediaPicker('site_logo_dark', 'preview_site_logo_dark')">
                                         <i class="ri-pencil-fill"></i>
                                     </button>
                                 </div>
@@ -128,7 +128,7 @@
                                     </div>
                                     <input type="hidden" name="site_logo_light" id="site_logo_light" value="{{ \App\Models\Setting::get('site_logo_light') }}">
                                     <button type="button" class="btn btn-sm btn-primary position-absolute top-0 end-0 m-n2 rounded-circle shadow" 
-                                            onclick="openMediaPicker('site_logo_light')">
+                                            onclick="openMediaPicker('site_logo_light', 'preview_site_logo_light')">
                                         <i class="ri-pencil-fill"></i>
                                     </button>
                                 </div>
@@ -144,7 +144,7 @@
                                     </div>
                                     <input type="hidden" name="site_favicon" id="site_favicon" value="{{ \App\Models\Setting::get('site_favicon') }}">
                                     <button type="button" class="btn btn-sm btn-primary position-absolute top-0 end-0 m-n2 rounded-circle shadow" 
-                                            onclick="openMediaPicker('site_favicon')">
+                                            onclick="openMediaPicker('site_favicon', 'preview_site_favicon')">
                                         <i class="ri-pencil-fill"></i>
                                     </button>
                                 </div>
@@ -164,7 +164,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-end gap-2">
-                        <button type="button" class="btn btn-light px-4">Hủy bỏ</button>
+                        <button type="button" class="btn btn-light px-4" onclick="window.history.back()">Hủy bỏ</button>
                         <button type="submit" class="btn btn-primary px-4 shadow-none">
                             <i class="ri-save-2-line me-1 align-bottom"></i> Lưu cấu hình
                         </button>
@@ -179,25 +179,4 @@
 
 @endsection
 
-@push('scripts')
-<script>
-    let currentTargetInput = '';
-
-    function openMediaPicker(targetId) {
-        currentTargetInput = targetId;
-        const modal = new bootstrap.Modal(document.getElementById('mediaPickerModal'));
-        modal.show();
-    }
-
-    // Callback từ Media Picker
-    window.mediaPickerCallback = function(file) {
-        if (currentTargetInput) {
-            document.getElementById(currentTargetInput).value = file.path;
-            const preview = document.getElementById('preview_' + currentTargetInput);
-            if (preview) {
-                preview.src = file.full_url;
-            }
-        }
-    };
-</script>
-@endpush
+{{-- Script section removed because we use the standard openMediaPicker from picker-modal.blade.php --}}

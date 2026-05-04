@@ -90,6 +90,13 @@ class GeneralSettingsSeeder extends Seeder
                 'type' => 'string',
                 'description' => 'Link Tiktok'
             ],
+            [
+                'key' => 'max_upload_size',
+                'value' => '50',
+                'group' => 'media',
+                'type' => 'integer',
+                'description' => 'Giới hạn dung lượng tải lên (MB)'
+            ],
         ];
 
         foreach ($settings as $setting) {

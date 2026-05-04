@@ -38,7 +38,7 @@ class SettingController extends Controller
             Gate::authorize('setting.manage');
         }
 
-        $settings = Setting::where('group', 'media')->orWhereNull('group')->orWhere('group', 'general')->get();
+        $settings = Setting::where('group', 'media')->get();
         return view('admin.settings.index', compact('settings'));
     }
 

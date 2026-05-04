@@ -6,7 +6,7 @@
                 <img src="{{ get_image_url(\App\Models\Setting::get('site_favicon')) ?: asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_dark')) ?: asset('assets/admin/images/logo-dark.png') }}" alt="" height="22">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_dark')) ?: asset('assets/admin/images/logo-dark.png') }}" alt="" height="30">
             </span>
         </a>
         <a href="{{ route('admin.dashboard') }}" class="logo logo-light">
@@ -14,7 +14,7 @@
                 <img src="{{ get_image_url(\App\Models\Setting::get('site_favicon')) ?: asset('assets/admin/images/logo-sm.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_light')) ?: asset('assets/admin/images/logo-light.png') }}" alt="" height="22">
+                <img src="{{ get_image_url(\App\Models\Setting::get('site_logo_light')) ?: asset('assets/admin/images/logo-light.png') }}" alt="" height="30">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
@@ -63,6 +63,14 @@
                 @canany(['blog.view', 'blog_category.view'])
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Blog</span></li>
 
+                @can('blog_category.view')
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.blog-categories.*') ? 'active' : '' }}" href="{{ route('admin.blog-categories.index') }}">
+                        <i class="ri-folder-2-line"></i> <span>Danh mục</span>
+                    </a>
+                </li>
+                @endcan
+
                 @can('blog.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.blog.*') ? 'active' : '' }}" href="{{ route('admin.blog.index') }}">
@@ -71,13 +79,11 @@
                 </li>
                 @endcan
 
-                @can('blog_category.view')
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ request()->routeIs('admin.blog-categories.*') ? 'active' : '' }}" href="{{ route('admin.blog-categories.index') }}">
-                        <i class="ri-folder-2-line"></i> <span>Danh mục</span>
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">
+                        <i class="ri-chat-1-line"></i> <span>Bình luận</span>
                     </a>
                 </li>
-                @endcan
                 @endcanany
 
                 @can('slider.view')
@@ -96,20 +102,23 @@
                     </a>
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.notifications.*') || request()->routeIs('notifications.*') ? 'show' : '' }}" id="sidebarNotifications">
                         <ul class="nav nav-sm flex-column">
-                            @if(auth()->user()->role_name == 'Quản trị viên' || auth()->user()->role_name == 'admin')
+                            @can('notifications.history')
                             <li class="nav-item">
                                 <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}"> Lịch sử gửi </a>
                             </li>
+                            @endcan
+                            @can('notifications.create')
                             <li class="nav-item">
                                 <a href="{{ route('admin.notifications.create') }}" class="nav-link {{ request()->routeIs('admin.notifications.create') ? 'active' : '' }}"> Gửi thông báo </a>
                             </li>
-                            @endif
+                            @endcan
                             <li class="nav-item">
                                 <a href="{{ route('notifications.userList') }}" class="nav-link {{ request()->routeIs('notifications.userList') ? 'active' : '' }}"> Thông báo của tôi </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
                 <li class="nav-item">

@@ -44,6 +44,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
         Route::get('/',           [\App\Http\Controllers\Admin\MediaController::class, 'index'])->name('index');
         Route::post('/upload',    [\App\Http\Controllers\Admin\MediaController::class, 'upload'])->name('upload');
         Route::get('/files',      [\App\Http\Controllers\Admin\MediaController::class, 'files'])->name('files');
+        Route::get('/folders',    [\App\Http\Controllers\Admin\MediaController::class, 'folders'])->name('folders');
         Route::delete('/{file}',  [\App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-delete', [\App\Http\Controllers\Admin\MediaController::class, 'bulkDestroy'])->name('bulk-destroy');
         Route::post('/folders',   [\App\Http\Controllers\Admin\MediaController::class, 'createFolder'])->name('folders.store');
@@ -63,4 +64,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::get('/notifications/create', [\App\Http\Controllers\Admin\NotificationController::class, 'create'])->name('notifications.create');
     Route::post('/notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'store'])->name('notifications.store');
     Route::delete('/notifications/{history}', [\App\Http\Controllers\Admin\NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    // Comments Management
+    Route::get('/comments', [\App\Http\Controllers\Admin\CommentController::class, 'index'])->name('comments.index');
+    Route::post('/comments', [\App\Http\Controllers\Admin\CommentController::class, 'store'])->name('comments.store');
+    Route::post('/comments/{id}/toggle', [\App\Http\Controllers\Admin\CommentController::class, 'toggleStatus'])->name('comments.toggle');
+    Route::post('/comments/{id}/reply', [\App\Http\Controllers\Admin\CommentController::class, 'reply'])->name('comments.reply');
+    Route::delete('/comments/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+});
+
+// Public Comments
+Route::middleware(['auth'])->group(function () {
+    Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('comments.store');
 });
