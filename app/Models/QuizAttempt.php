@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\HasUuidv7;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class QuizAttempt extends Model
+{
+    use HasUuidv7;
+
+    const UPDATED_AT = null; // We only track created_at for attempts
+
+    protected $fillable = [
+        'user_id',
+        'quiz_id',
+        'score',
+        'correct_count',
+        'total_count',
+        'time_spent',
+        'status',
+    ];
+
+    /**
+     * User who made the attempt.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Quiz attempted.
+     */
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class);
+    }
+
+    /**
+     * Specific responses in this attempt.
+     */
+    public function responses(): HasMany
+    {
+        return $this->hasMany(UserResponse::class, 'attempt_id');
+    }
+}

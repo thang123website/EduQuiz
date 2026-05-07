@@ -214,11 +214,13 @@
                                         </div>
                                     </div>
                                     @empty
-                                    <div class="w-25 w-sm-50 pt-3 mx-auto">
-                                        <img src="{{ asset('assets/admin/images/svg/bell.svg') }}" class="img-fluid" alt="user-pic">
-                                    </div>
-                                    <div class="pb-5 mt-2 text-center">
-                                        <p class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </p>
+                                    <div class="empty-notification-elem">
+                                        <div class="w-25 w-sm-50 pt-3 mx-auto">
+                                            <img src="{{ asset('assets/admin/images/svg/bell.svg') }}" class="img-fluid" alt="user-pic">
+                                        </div>
+                                        <div class="pb-5 mt-2 text-center">
+                                            <p class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </p>
+                                        </div>
                                     </div>
                                     @endforelse
 

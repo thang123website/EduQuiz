@@ -10,13 +10,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role_id', 'role_name', 'status', 'latitude', 'longitude', 'address', 'gender', 'dob', 'avatar', 'cover_photo'])]
+#[Fillable(['name', 'email', 'mobile', 'password', 'role_id', 'role_name', 'status', 'ban', 'ban_start_at', 'ban_end_at', 'logged_count', 'latitude', 'longitude', 'address', 'gender', 'dob', 'avatar', 'cover_photo'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUlids;
+    use HasApiTokens, HasFactory, Notifiable, HasUlids;
 
     protected $appends = [
         'avatar_url'
@@ -77,5 +79,13 @@ class User extends Authenticatable
         }
 
         return in_array($permissionName, $this->permissions);
+    }
+
+    /**
+     * Targets set by user.
+     */
+    public function targets(): HasMany
+    {
+        return $this->hasMany(UserTarget::class);
     }
 }

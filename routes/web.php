@@ -38,6 +38,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::get('/settings/mail', [\App\Http\Controllers\Admin\SettingController::class, 'mailSettings'])->name('settings.mail');
     Route::put('/settings/mail', [\App\Http\Controllers\Admin\SettingController::class, 'mailSettingsUpdate'])->name('settings.mail.update');
     Route::post('/settings/mail/test', [\App\Http\Controllers\Admin\SettingController::class, 'testMailConnection'])->name('settings.mail.test');
+    
+    Route::get('/settings/api', [\App\Http\Controllers\Admin\SettingController::class, 'apiSettings'])->name('settings.api');
 
     // Media Manager
     Route::prefix('media')->name('media.')->group(function () {
@@ -71,6 +73,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('/comments/{id}/toggle', [\App\Http\Controllers\Admin\CommentController::class, 'toggleStatus'])->name('comments.toggle');
     Route::post('/comments/{id}/reply', [\App\Http\Controllers\Admin\CommentController::class, 'reply'])->name('comments.reply');
     Route::delete('/comments/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'destroy'])->name('comments.destroy');
+
+    // Quiz Management
+    Route::resource('quiz-categories', \App\Http\Controllers\Admin\QuizCategoryController::class);
+    Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class);
+    Route::resource('quiz-attempts', \App\Http\Controllers\Admin\QuizAttemptController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only(['show', 'store', 'update', 'destroy']);
 });
 
 // Public Comments

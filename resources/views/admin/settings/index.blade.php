@@ -40,42 +40,26 @@
                 <form action="{{ route('admin.settings.update') }}" method="POST">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="_group" value="media">
                     
                     <div class="row">
-                        @foreach($settings as $setting)
-                            <div class="col-lg-12">
-                                <div class="mb-4">
-                                    <label class="form-label fw-bold d-flex align-items-center gap-2">
-                                        <i class="ri-settings-4-line text-primary fs-18"></i>
-                                        {{ $setting->description ?? $setting->key }}
-                                    </label>
-                                    
-                                    @if($setting->type === 'integer')
-                                        <div class="input-group">
-                                            <input type="number" name="{{ $setting->key }}" class="form-control form-control-lg" value="{{ $setting->value }}" required>
-                                            <span class="input-group-text bg-light">MB</span>
-                                        </div>
-                                    @elseif($setting->type === 'boolean')
-                                        <div class="form-check form-switch form-switch-lg" dir="ltr">
-                                            <input type="hidden" name="{{ $setting->key }}" value="0">
-                                            <input type="checkbox" name="{{ $setting->key }}" class="form-check-input" id="switch_{{ $setting->key }}" value="1" {{ $setting->value == '1' ? 'checked' : '' }}>
-                                            <label class="form-check-label text-muted ms-2" for="switch_{{ $setting->key }}">Kích hoạt tính năng này</label>
-                                        </div>
-                                    @else
-                                        <input type="text" name="{{ $setting->key }}" class="form-control form-control-lg" value="{{ $setting->value }}" required>
-                                    @endif
-                                    
-                                    <div class="form-text text-muted mt-2">
-                                        <i class="ri-information-line me-1"></i> 
-                                        @if($setting->key === 'upload_max_size')
-                                            Giá trị này giới hạn dung lượng tối đa cho mỗi tệp tin được tải lên hệ thống.
-                                        @else
-                                            Cấu hình kỹ thuật cho hệ thống xử lý Media.
-                                        @endif
-                                    </div>
+                        <div class="col-lg-12">
+                            <div class="mb-4">
+                                <label class="form-label fw-bold d-flex align-items-center gap-2">
+                                    <i class="ri-settings-4-line text-primary fs-18"></i>
+                                    Dung lượng tải lên tối đa (MB)
+                                </label>
+                                
+                                <div class="input-group">
+                                    <input type="number" name="max_upload_size" class="form-control form-control-lg" value="{{ \App\Models\Setting::get('max_upload_size', 20) }}" required>
+                                    <span class="input-group-text bg-light">MB</span>
+                                </div>
+                                
+                                <div class="form-text text-muted mt-2">
+                                    <i class="ri-information-line me-1"></i> Giá trị này giới hạn dung lượng tối đa cho mỗi tệp tin được tải lên hệ thống.
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
 
                     <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">

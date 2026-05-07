@@ -29,6 +29,7 @@
         <form action="{{ route('admin.settings.update') }}" method="POST">
             @csrf
             @method('PUT')
+            <input type="hidden" name="_group" value="general">
             
             <div class="row">
                 <!-- Cột trái: Thông tin văn bản -->

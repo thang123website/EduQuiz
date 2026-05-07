@@ -85,6 +85,23 @@
                     </a>
                 </li>
                 @endcanany
+                
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Đề thi</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-categories.*') ? 'active' : '' }}" href="{{ route('admin.quiz-categories.index') }}">
+                        <i class="ri-folder-shared-line"></i> <span>Danh mục Quiz</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.quizzes.*') ? 'active' : '' }}" href="{{ route('admin.quizzes.index') }}">
+                        <i class="ri-questionnaire-line"></i> <span>Danh sách Quiz</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-attempts.*') ? 'active' : '' }}" href="{{ route('admin.quiz-attempts.index') }}">
+                        <i class="ri-history-line"></i> <span>Lịch sử thi</span>
+                    </a>
+                </li>
 
                 @can('slider.view')
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>Nội dung Website</span></li>
@@ -120,6 +137,7 @@
                 </li>
 
 
+                @can('setting.manage')
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
@@ -136,9 +154,13 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.settings.mail') }}" class="nav-link {{ request()->routeIs('admin.settings.mail') ? 'active' : '' }}"> Cấu hình Email </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.api') }}" class="nav-link {{ request()->routeIs('admin.settings.api') ? 'active' : '' }}"> Cấu hình API </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
+                @endcan
             </ul>
         </div>
         <!-- Sidebar -->

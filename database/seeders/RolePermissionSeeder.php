@@ -20,6 +20,14 @@ class RolePermissionSeeder extends Seeder {
             ['name' => 'exams.create',          'caption' => 'Tạo bài thi mới',          'group' => 'exams'],
             ['name' => 'exams.update',          'caption' => 'Chỉnh sửa bài thi',        'group' => 'exams'],
             ['name' => 'exams.delete',          'caption' => 'Xoá bài thi',              'group' => 'exams'],
+            // Quiz Categories permissions
+            ['name' => 'quiz_category.view',    'caption' => 'Xem danh mục bài thi',     'group' => 'exams'],
+            ['name' => 'quiz_category.create',  'caption' => 'Tạo danh mục bài thi',     'group' => 'exams'],
+            ['name' => 'quiz_category.update',  'caption' => 'Chỉnh sửa danh mục bài thi','group' => 'exams'],
+            ['name' => 'quiz_category.delete',  'caption' => 'Xoá danh mục bài thi',     'group' => 'exams'],
+            // Quiz Attempts permissions
+            ['name' => 'quiz_attempt.view',     'caption' => 'Xem lịch sử thi',          'group' => 'exams'],
+            ['name' => 'quiz_attempt.delete',   'caption' => 'Xoá lịch sử thi',          'group' => 'exams'],
             ['name' => 'users.view',            'caption' => 'Xem danh sách người dùng', 'group' => 'users'],
             ['name' => 'users.create',          'caption' => 'Thêm người dùng mới',      'group' => 'users'],
             ['name' => 'users.update',          'caption' => 'Chỉnh sửa người dùng',     'group' => 'users'],
@@ -44,6 +52,8 @@ class RolePermissionSeeder extends Seeder {
             // Notification permissions
             ['name' => 'notifications.history', 'caption' => 'Xem lịch sử thông báo',     'group' => 'notifications'],
             ['name' => 'notifications.create',  'caption' => 'Gửi thông báo hệ thống',    'group' => 'notifications'],
+            // Settings permissions
+            ['name' => 'setting.manage',        'caption' => 'Cấu hình hệ thống',         'group' => 'settings'],
         ];
 
         foreach ($sections as $sec) {

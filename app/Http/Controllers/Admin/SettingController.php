@@ -44,14 +44,15 @@ class SettingController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
-        if (Gate::has('setting.manage')) {
-            Gate::authorize('setting.manage');
+        if (!auth()->user()->isAdmin() && !auth()->user()->hasPermission('setting.manage')) {
+            abort(403, 'Bạn không có quyền quản lý cấu hình hệ thống.');
         }
 
-        $data = $request->except(['_token', '_method']);
+        $group = $request->input('_group', 'general');
+        $data = $request->except(['_token', '_method', '_group']);
 
         foreach ($data as $key => $value) {
-            Setting::where('key', $key)->update(['value' => $value]);
+            Setting::set($key, $value, $group);
         }
 
         Cache::forget('app_settings');
@@ -172,5 +173,16 @@ class SettingController extends Controller
                 'message' => 'Kết nối thất bại: ' . $e->getMessage(),
             ], 422);
         }
+    }
+
+    // ─── API Settings ──────────────────────────────────────────────────────────
+    
+    public function apiSettings()
+    {
+        if (Gate::has('setting.manage')) {
+            Gate::authorize('setting.manage');
+        }
+
+        return view('admin.settings.api');
     }
 }

@@ -1,0 +1,131 @@
+{
+	"info": {
+		"name": "EduQuiz Auth API v1",
+		"description": "Postman Collection for EduQuiz Authentication API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"full_name\": \"John Doe\",\n  \"email\": \"johndoe@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/register",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "register" ]
+				}
+			}
+		},
+		{
+			"name": "2. Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"johndoe@example.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/login",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "login" ]
+				}
+			}
+		},
+		{
+			"name": "3. Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" },
+					{ "key": "Authorization", "value": "Bearer {{auth_token}}" }
+				],
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/logout",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "logout" ]
+				}
+			}
+		},
+		{
+			"name": "4. Forgot Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"johndoe@example.com\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/forgot-password",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "forgot-password" ]
+				}
+			}
+		},
+		{
+			"name": "5. Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"johndoe@example.com\",\n  \"code\": \"123456\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/reset-password",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "reset-password" ]
+				}
+			}
+		},
+		{
+			"name": "6. Verify Account",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Accept", "value": "application/json" },
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "X-API-KEY", "value": "{{api_key}}" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"johndoe@example.com\",\n  \"code\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/auth/verify-account",
+					"host": [ "{{base_url}}" ],
+					"path": [ "api", "v1", "auth", "verify-account" ]
+				}
+			}
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" },
+		{ "key": "api_key", "value": "YOUR_API_KEY_HERE" },
+		{ "key": "auth_token", "value": "YOUR_SANCTUM_TOKEN_HERE" }
+	]
+}
