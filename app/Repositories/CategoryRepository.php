@@ -34,4 +34,42 @@ class CategoryRepository
             ->orderBy('order_idx')
             ->get();
     }
+
+    /**
+     * Get flat tree for select dropdowns
+     */
+    public function getFlatTree($activeOnly = false): Collection
+    {
+        $query = QuizCategory::whereNull('parent_id')->orderBy('order_idx');
+        if ($activeOnly) {
+            $query->where('is_active', true);
+        }
+        $categories = $query->get();
+
+        $allCategoriesQuery = QuizCategory::query();
+        if ($activeOnly) {
+            $allCategoriesQuery->where('is_active', true);
+        }
+        $allCategories = $allCategoriesQuery->get()->groupBy('parent_id');
+        
+        $result = [];
+        foreach ($categories as $category) {
+            $this->flattenCategories($category, $allCategories, $result, '');
+        }
+        
+        return new \Illuminate\Database\Eloquent\Collection($result);
+    }
+
+    private function flattenCategories($category, $allCategories, &$result, $prefix)
+    {
+        $category->name_prefixed = $prefix . $category->name;
+        $result[] = $category;
+
+        if (isset($allCategories[$category->id])) {
+            $children = $allCategories[$category->id]->sortBy('order_idx');
+            foreach ($children as $child) {
+                $this->flattenCategories($child, $allCategories, $result, $prefix . '— ');
+            }
+        }
+    }
 }

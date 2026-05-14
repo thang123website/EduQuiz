@@ -22,7 +22,15 @@ class MediaController extends Controller
 
         $folderId = $request->query('folder_id');
         $search   = $request->query('search');
-        $query    = MediaFile::with('folder')->latest();
+        $sort     = $request->query('sort', 'newest');
+        
+        $query    = MediaFile::with('folder');
+        
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } else {
+            $query->latest();
+        }
 
         if ($folderId) {
             $query->where('folder_id', $folderId);
@@ -85,7 +93,7 @@ class MediaController extends Controller
         $files = MediaFile::with('folder')
             ->when($request->folder_id, fn($q) => $q->where('folder_id', $request->folder_id))
             ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
-            ->latest()
+            ->when($request->sort === 'oldest', fn($q) => $q->oldest(), fn($q) => $q->latest())
             ->paginate(30);
 
         return response()->json($files);

@@ -42,6 +42,16 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="mb-3">
+                                <label class="form-label fw-semibold text-dark" for="type">Loại bài thi <span class="text-danger">*</span></label>
+                                <select class="form-select" id="type" name="type" data-choices data-choices-search-false required>
+                                    <option value="full_test" selected>Full Test (Đầy đủ)</option>
+                                    <option value="practice">Practice (Luyện tập)</option>
+                                    <option value="minitest">Mini Test (Ngắn)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
                                 <label class="form-label" for="duration">Thời gian làm bài (Phút) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="duration" name="duration" value="45" required>
                             </div>
@@ -85,10 +95,19 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="category_id" class="form-label fw-semibold text-dark">Danh mục <span class="text-danger">*</span></label>
-                        <select class="form-select" id="category_id" name="category_id" data-choices required>
+                        <select class="form-select" id="category_id" name="category_id" data-choices data-choices-sorting-false required>
                             <option value="">Chọn danh mục</option>
                             @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                <option value="{{ $cat->id }}">{{ $cat->name_prefixed ?? $cat->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tags" class="form-label fw-semibold text-dark">Thẻ (Tags)</label>
+                        <select class="form-select" id="tags" name="tags[]" data-choices data-choices-removeItem multiple>
+                            <option value="">Chọn thẻ...</option>
+                            @foreach($tags as $tag)
+                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -147,6 +166,12 @@
 @include('admin.media.picker-modal')
 
 @endsection
+
+@push('styles')
+<style>
+    .choices__list--dropdown { z-index: 1050 !important; }
+</style>
+@endpush
 
 @push('scripts')
 <script>

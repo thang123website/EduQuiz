@@ -131,7 +131,7 @@
                             <select class="form-select" name="category_id">
                                 <option value="">Tất cả danh mục</option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name_prefixed ?? $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>

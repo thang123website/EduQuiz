@@ -19,10 +19,16 @@ class AdminMiddleware
             return redirect()->route('login');
         }
 
-        // Nếu user có role và có thể truy cập admin (hoặc kiểm tra role != student)
-        // Hiện tại kiểm tra đơn giản nếu không có role thì chặn
-        if (!$request->user()->role_id) {
-            abort(403, 'Unauthorized access');
+        $user = $request->user();
+
+        // 1. Chặn user không có role
+        if (!$user->role_id) {
+            abort(403, 'Tài khoản của bạn chưa được cấp quyền truy cập trang quản trị.');
+        }
+
+        // 2. Chặn nếu không phải là Admin và không được cấp bất kỳ quyền nào
+        if (!$user->isAdmin() && !$user->hasAnyPermission()) {
+            abort(403, 'Tài khoản của bạn không có quyền truy cập trang quản trị.');
         }
 
         return $next($request);

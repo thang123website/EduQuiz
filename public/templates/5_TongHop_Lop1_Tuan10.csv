@@ -1,0 +1,11 @@
+Mã Nhóm,Loại câu hỏi,Nội dung câu hỏi,Các đáp án,Vị trí đáp án đúng,Điểm mặc định,Giải thích,Độ khó,Media URL,Loại Media,Extra Image URL
+,single_choice,Phép tính nào đúng?,5 + 4 = 8|6 - 2 = 4|3 + 3 = 7|9 - 1 = 7,2,1.0,6 - 2 = 4 là đúng,medium,,,
+,single_choice,"Chữ nào sau đây là chữ hoa?",a|b|C|d,3,1.0,C là chữ in hoa,easy,,,
+,single_choice,Số liền trước của số 10 là số mấy?,8|9|11|12,2,1.0,,medium,,,
+,single_choice,"Con gì kêu ""Meo meo""?",Con chó|Con mèo|Con lợn|Con gà,2,1.0,,easy,https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=400,image,
+,multiple_answer,Chọn các con vật có 4 chân:,Con chó|Con gà|Con bò|Con vịt,1|3,1.0,Chó và bò có 4 chân,medium,,,
+,single_choice,9 - 3 bằng mấy?,5|6|7|8,2,1.0,,easy,,,
+,single_choice,"Chữ ""Mẹ"" gồm những âm nào ghép lại?",Âm M và âm a|Âm M và âm e|Âm M và âm i|Âm M và âm o,2,1.0,,easy,,,
+,single_choice,Có 5 quả bóng vỡ 1 quả. Còn lại mấy quả?,3|4|5|6,2,1.0,5 - 1 = 4,easy,https://images.unsplash.com/photo-1511886929837-354d827aae26?q=80&w=400,image,
+,single_choice,Hình nào dưới đây không có góc cạnh?,Hình vuông|Hình tròn|Hình tam giác|Hình chữ nhật,2,1.0,Hình tròn không có góc cạnh,easy,,,
+,single_choice,Từ nào chỉ người thân trong gia đình?,Cái cây|Ngôi nhà|Bà ngoại|Con đường,3,1.0,,easy,,,

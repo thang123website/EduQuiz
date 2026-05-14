@@ -30,7 +30,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" href="#questions-builder" role="tab">
-                            <i class="ri-question-line me-1 align-bottom"></i> Quản lý câu hỏi ({{ $quiz->questions_count ?? $quiz->questions->count() }})
+                            <i class="ri-question-line me-1 align-bottom"></i> Quản lý câu hỏi ({{ $quiz->questions->where('type', '!=', 'group')->count() }})
                         </a>
                     </li>
                 </ul>
@@ -52,6 +52,16 @@
                                         <textarea class="form-control" id="description" name="description" rows="5">{{ $quiz->description }}</textarea>
                                     </div>
                                     <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold text-dark" for="type">Loại bài thi <span class="text-danger">*</span></label>
+                                                <select class="form-select" id="type" name="type" data-choices data-choices-search-false required>
+                                                    <option value="full_test" {{ $quiz->type == 'full_test' ? 'selected' : '' }}>Full Test (Đầy đủ)</option>
+                                                    <option value="practice" {{ $quiz->type == 'practice' ? 'selected' : '' }}>Practice (Luyện tập)</option>
+                                                    <option value="minitest" {{ $quiz->type == 'minitest' ? 'selected' : '' }}>Mini Test (Ngắn)</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label class="form-label fw-semibold text-dark" for="duration">Thời gian (Phút)</label>
@@ -81,10 +91,21 @@
                                         <div class="card-body">
                                             <div class="mb-3">
                                                 <label for="category_id" class="form-label fw-semibold text-dark">Danh mục <span class="text-danger">*</span></label>
-                                                <select class="form-select" id="category_id" name="category_id" data-choices required>
+                                                <select class="form-select" id="category_id" name="category_id" data-choices data-choices-sorting-false required>
                                                     <option value="">Chọn danh mục</option>
                                                     @foreach($categories as $cat)
-                                                        <option value="{{ $cat->id }}" {{ $quiz->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                                        <option value="{{ $cat->id }}" {{ $quiz->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->name_prefixed ?? $cat->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="tags" class="form-label fw-semibold text-dark">Thẻ (Tags)</label>
+                                                @php $selectedTags = $quiz->tags->pluck('id')->toArray(); @endphp
+                                                <select class="form-select" id="tags" name="tags[]" data-choices data-choices-removeItem multiple>
+                                                    <option value="">Chọn thẻ...</option>
+                                                    @foreach($tags as $tag)
+                                                        <option value="{{ $tag->id }}" {{ in_array($tag->id, $selectedTags) ? 'selected' : '' }}>{{ $tag->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -141,33 +162,170 @@
 
                     <div class="tab-pane" id="questions-builder" role="tabpanel">
                         <div class="d-flex align-items-center mb-3">
-                            <h5 class="flex-grow-1 mb-0">Danh sách câu hỏi</h5>
+                            <h5 class="flex-grow-1 mb-0">Cấu trúc Đề thi (Parts)</h5>
                             @if(auth()->user()->isAdmin() || auth()->user()->hasPermission('exams.create'))
                             <div class="flex-shrink-0">
-                                <button type="button" class="btn btn-success btn-sm" onclick="openQuestionModal()">
-                                    <i class="ri-add-line align-middle me-1"></i> Thêm câu hỏi
-                                </button>
-                                <button type="button" class="btn btn-info btn-sm" onclick="openBulkImport()">
-                                    <i class="ri-upload-2-line align-middle me-1"></i> Nhập từ Excel
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPartModal">
+                                    <i class="ri-add-line align-middle me-1"></i> Thêm Part Mới
                                 </button>
                             </div>
                             @endif
                         </div>
 
-                        <div id="questions-list" class="nested-sortable">
-                            @forelse($quiz->questions as $question)
-                                @include('admin.quizzes.partials.question-card', ['question' => $question, 'index' => $loop->iteration])
+                        <div id="parts-list">
+                            @forelse($quiz->parts as $part)
+                                <div class="card border mb-3 shadow-none part-item" data-id="{{ $part->id }}">
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                                        <h6 class="mb-0 fw-semibold text-primary part-drag-handle" style="cursor: grab;"><i class="ri-drag-move-fill text-muted me-2"></i>{{ $part->title }} <span class="text-muted fs-12 ms-1">({{ $part->questions->where('type', '!=', 'group')->count() }} câu hỏi)</span></h6>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-info" onclick="openBulkImport('{{ $part->id }}')">
+                                                <i class="ri-upload-2-line"></i> Nhập từ Excel
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-success ms-1" onclick="openQuestionModal(null, '{{ $part->id }}')">
+                                                <i class="ri-add-line"></i> Thêm câu hỏi
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-warning ms-1" onclick="openEditPartModal('{{ $part->id }}', '{{ htmlspecialchars($part->title, ENT_QUOTES) }}', '{{ htmlspecialchars($part->description, ENT_QUOTES) }}')" title="Sửa Part">
+                                                <i class="ri-pencil-fill"></i>
+                                            </button>
+                                            <form action="{{ route('admin.quiz-parts.destroy', $part->id) }}" method="POST" class="d-inline-block ms-1" onsubmit="return confirm('Cảnh báo: Bạn có chắc muốn xóa Part này cùng TOÀN BỘ câu hỏi bên trong không?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Xóa Part"><i class="ri-delete-bin-line"></i></button>
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-soft-dark ms-1" data-bs-toggle="collapse" data-bs-target="#collapsePart{{ $part->id }}" aria-expanded="true" title="Thu gọn / Mở rộng">
+                                                <i class="ri-arrow-up-s-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="collapse show" id="collapsePart{{ $part->id }}">
+                                        <div class="card-body bg-white">
+                                            <div class="nested-sortable">
+                                                @php $qIndex = 1; @endphp
+                                                @forelse($part->questions->whereNull('parent_id') as $question)
+                                                    @include('admin.quizzes.partials.question-card', ['question' => $question, 'index' => $qIndex++])
+                                                @empty
+                                                    <div class="text-center py-3 border-dashed rounded text-muted">
+                                                        Part này chưa có câu hỏi nào.
+                                                    </div>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             @empty
                                 <div class="text-center py-5 border rounded border-dashed">
-                                    <i class="ri-questionnaire-line fs-48 text-muted"></i>
-                                    <h5 class="mt-2">Chưa có câu hỏi nào</h5>
-                                    <p class="text-muted">Nhấp vào nút "Thêm câu hỏi" để bắt đầu xây dựng nội dung.</p>
+                                    <i class="ri-list-check-2 fs-48 text-muted"></i>
+                                    <h5 class="mt-2">Chưa có Part nào</h5>
+                                    <p class="text-muted">Cấu trúc đề thi hiện tại yêu cầu bạn phải tạo các Part (Phần) trước khi thêm câu hỏi.<br>Ví dụ: Part 1 - Listening, Part 5 - Reading.</p>
+                                    <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addPartModal">
+                                        Tạo Part đầu tiên
+                                    </button>
                                 </div>
                             @endforelse
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+{{-- Add Part Modal --}}
+<div class="modal fade" id="addPartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm Part mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('admin.quizzes.parts.store', $quiz->id) }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên Part <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control" placeholder="Ví dụ: Part 1: Photographs" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả thêm</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="Hướng dẫn làm bài..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu Part</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Edit Part Modal --}}
+<div class="modal fade" id="editPartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa Part</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editPartForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên Part <span class="text-danger">*</span></label>
+                        <input type="text" name="title" id="editPartTitle" class="form-control" placeholder="Ví dụ: Part 1: Photographs" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mô tả thêm</label>
+                        <textarea name="description" id="editPartDescription" class="form-control" rows="3" placeholder="Hướng dẫn làm bài..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Bulk Import Modal --}}
+<div class="modal fade" id="importQuestionsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nhập câu hỏi từ Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="importQuestionsForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-4 text-center">
+                        <a href="{{ asset('templates/Questions_Template.xlsx') }}" download class="btn btn-soft-success btn-sm me-2">
+                            <i class="ri-file-excel-2-line align-bottom me-1"></i> Tải Mẫu Excel (.xlsx)
+                        </a>
+                        <a href="{{ asset('templates/Questions_Template.csv') }}" download class="btn btn-soft-info btn-sm">
+                            <i class="ri-file-text-line align-bottom me-1"></i> Tải Mẫu CSV (.csv)
+                        </a>
+                        <p class="text-muted mt-2 mb-0 fs-12">Vui lòng tải file mẫu, điền dữ liệu đúng định dạng và tải lên lại.</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Chọn File (.xlsx, .xls, .csv) <span class="text-danger">*</span></label>
+                        <input type="file" name="file" id="importExcelFile" class="form-control" accept=".xlsx, .xls, .csv" required>
+                    </div>
+                    <div id="importProgressContainer" class="d-none mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fs-12 text-muted" id="importStatusText">Đang tải và xử lý dữ liệu...</span>
+                            <span class="fs-12 fw-medium" id="importPercentage">0%</span>
+                        </div>
+                        <div class="progress progress-sm">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="importProgressBar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="btnImportSubmit">Bắt đầu Import</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -201,52 +359,12 @@
     .question-card .card-header { background-color: var(--vz-light); border-bottom: 1px solid var(--vz-border-color); cursor: move; }
     .option-item { background-color: var(--vz-card-bg-custom); border: 1px solid var(--vz-border-color); padding: 10px; border-radius: 6px; margin-bottom: 10px; }
     .option-item.correct { border-left: 4px solid #0ab39c; background-color: rgba(10, 179, 156, 0.1); }
+    .choices__list--dropdown { z-index: 1050 !important; }
 </style>
 @endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<script>
-    var mdeEditor;
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize Markdown Editor for Modal
-        mdeEditor = new SimpleMDE({ element: document.getElementById("question-content-editor") });
-
-        // Initialize Sortable
-        var el = document.getElementById('questions-list');
-        if (el) {
-            Sortable.create(el, {
-                handle: '.card-header',
-                animation: 150,
-                onEnd: function() {
-                    // logic to save order via AJAX
-                }
-            });
-        }
-    });
-
-    function openQuestionModal(questionId = null) {
-        if (!questionId) {
-            // Thêm sẵn 2 đáp án mặc định cho câu hỏi mới
-            const container = document.getElementById('options-container');
-            if (container && container.children.length === 0) {
-                addOption('', false);
-                addOption('', false);
-            }
-        }
-        const modal = new bootstrap.Modal(document.getElementById('questionModal'));
-        modal.show();
-    }
-
-    function openBulkImport() {
-        Swal.fire({
-            title: 'Tính năng đang phát triển',
-            text: 'Chức năng nhập câu hỏi từ Excel sẽ sớm được ra mắt!',
-            icon: 'info',
-            confirmButtonClass: 'btn btn-primary w-xs mt-2',
-            buttonsStyling: false
-        });
-    }
-</script>
+<script src="{{ asset('assets/admin/js/pages/quiz-edit.init.js') }}"></script>
 @endpush

@@ -27,7 +27,7 @@ class QuizCategoryController extends Controller
         }
 
         $categories = $this->repository->getAdminTree();
-        $allCategories = QuizCategory::orderBy('name')->get();
+        $allCategories = $this->repository->getFlatTree();
         
         return view('admin.quiz-categories.index', compact('categories', 'allCategories'));
     }

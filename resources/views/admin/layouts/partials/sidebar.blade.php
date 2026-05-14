@@ -86,22 +86,41 @@
                 </li>
                 @endcanany
                 
+                @canany(['quiz_category.view', 'exams.view', 'quiz_attempt.view'])
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Đề thi</span></li>
+                
+                @can('quiz_category.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-categories.*') ? 'active' : '' }}" href="{{ route('admin.quiz-categories.index') }}">
                         <i class="ri-folder-shared-line"></i> <span>Danh mục Quiz</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('quiz_category.view') <!-- Using quiz_category permission for tags as well for now -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}">
+                        <i class="ri-price-tag-3-line"></i> <span>Quản lý Thẻ (Tags)</span>
+                    </a>
+                </li>
+                @endcan
+
+                @can('exams.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quizzes.*') ? 'active' : '' }}" href="{{ route('admin.quizzes.index') }}">
                         <i class="ri-questionnaire-line"></i> <span>Danh sách Quiz</span>
                     </a>
                 </li>
+                @endcan
+
+                @can('quiz_attempt.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-attempts.*') ? 'active' : '' }}" href="{{ route('admin.quiz-attempts.index') }}">
                         <i class="ri-history-line"></i> <span>Lịch sử thi</span>
                     </a>
                 </li>
+                @endcan
+                @endcanany
 
                 @can('slider.view')
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>Nội dung Website</span></li>

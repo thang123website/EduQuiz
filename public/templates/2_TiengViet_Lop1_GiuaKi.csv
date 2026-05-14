@@ -1,0 +1,12 @@
+Mã Nhóm,Loại câu hỏi,Nội dung câu hỏi,Các đáp án,Vị trí đáp án đúng,Điểm mặc định,Giải thích,Độ khó,Media URL,Loại Media,Extra Image URL
+,single_choice,Chữ nào dưới đây là âm "a"?,a|b|c|d,1,1.0,,easy,,,
+,single_choice,"Hình ảnh này là con gì? (Bắt đầu bằng chữ ""c"")",cá|cò|cua|cáo,2,1.0,Đây là con cò.,easy,https://images.unsplash.com/photo-1555169062-013468b47731?q=80&w=400,image,
+,single_choice,"Chọn từ viết đúng chính tả:",cá trê|cá chê|cá che|cá trê,1,1.0,,medium,,,
+,single_choice,"Nối chữ cái: ""b"" ghép với ""a"" thêm thanh sắc ta được tiếng gì?",ba|bà|bá|bạ,3,1.0,b - a - ba - sắc - bá,medium,,,
+,single_choice,"Tiếng ""chó"" có âm đầu là gì?",ch|c|o|ó,1,1.0,,easy,,,
+,single_choice,"Con gì kêu ""gâu gâu""?",Con mèo|Con chó|Con gà|Con vịt,2,1.0,,easy,https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400,image,
+,single_choice,Từ nào chỉ đồ dùng học tập?,Quả bóng|Quyển vở|Cái bát|Xe đạp,2,1.0,,medium,,,
+,multiple_answer,"Chọn các từ có chứa âm ""o"":",Con bò|Con cò|Con cá|Cái cây,1|2,1.0,Bò và cò có âm o,medium,,,
+TV01,group,Đọc đoạn văn: "Bé Nga có một chú mèo con lông màu vàng rất ngoan.",,,,,,medium,,,
+TV01,single_choice,Trong đoạn văn nhắc đến con vật nào?,Con chó|Con mèo|Con gà|Con thỏ,2,1.0,,easy,,,
+TV01,single_choice,Con mèo của bé Nga có màu gì?,Màu đen|Màu trắng|Màu vàng|Màu xám,3,1.0,,easy,,,

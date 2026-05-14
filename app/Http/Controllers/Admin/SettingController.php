@@ -56,6 +56,7 @@ class SettingController extends Controller
         }
 
         Cache::forget('app_settings');
+        Cache::forget('api_settings_general');
 
         return back()->with('success', 'Cập nhật cấu hình thành công!');
     }

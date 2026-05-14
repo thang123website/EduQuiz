@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+		"name": "EduQuiz Blog & Slider API v1",
+		"description": "Bộ API dành riêng cho tính năng hiển thị Slider và Blog (Public) của hệ thống EduQuiz.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Blog & Slider (Public)",
+			"item": [
+				{
+					"name": "Get Home Slider",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "HaqDIxe0l9HbKJQDCJMSBF4gvIX4ApVF",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/sliders/home",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sliders",
+								"home"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "HaqDIxe0l9HbKJQDCJMSBF4gvIX4ApVF",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/blog-categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blog-categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "HaqDIxe0l9HbKJQDCJMSBF4gvIX4ApVF",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/blogs?limit=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Popular Blogs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "HaqDIxe0l9HbKJQDCJMSBF4gvIX4ApVF",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/blogs/popular?limit=4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"popular"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Blog Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-API-KEY",
+								"value": "HaqDIxe0l9HbKJQDCJMSBF4gvIX4ApVF",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/blogs/bi-quyet-dat-diem-tuyet-doi-voi-he-thong-thi-thu-eduquiz-215",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"blogs",
+								"bi-quyet-dat-diem-tuyet-doi-voi-he-thong-thi-thu-eduquiz-215"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		}
+	]
+}

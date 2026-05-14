@@ -81,6 +81,16 @@ class User extends Authenticatable
         return in_array($permissionName, $this->permissions);
     }
 
+    public function hasAnyPermission()
+    {
+        if ($this->permissions === null) {
+            // Gọi tạm hasPermission để nạp cache vào $this->permissions
+            $this->hasPermission('dummy_load');
+        }
+
+        return count($this->permissions) > 0;
+    }
+
     /**
      * Targets set by user.
      */

@@ -12,6 +12,7 @@ use App\Models\BlogCategory;
 use App\Observers\PermissionObserver;
 use App\Observers\BlogObserver;
 use App\Observers\BlogCategoryObserver;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+
         Permission::observe(PermissionObserver::class);
         Blog::observe(BlogObserver::class);
         BlogCategory::observe(BlogCategoryObserver::class);

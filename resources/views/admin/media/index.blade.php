@@ -137,8 +137,12 @@
                     </div>
                     <div class="col-md-auto col-12 ms-auto">
                         <div class="d-flex gap-2 justify-content-md-end align-items-center">
+                            <select class="form-select" style="width: auto;" id="sortSelect" onchange="changeSort(this.value)">
+                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
+                            </select>
                             <div class="search-box">
-                                <input type="text" class="form-control search" id="searchInput" placeholder="Tìm tệp...">
+                                <input type="text" class="form-control search" id="searchInput" placeholder="Tìm tệp..." value="{{ request('search') }}">
                                 <i class="ri-search-line search-icon"></i>
                             </div>
                             @can('media.upload')
@@ -274,6 +278,13 @@ const CSRF_TOKEN      = '{{ csrf_token() }}';
 const FOLDER_ID       = '{{ $folderId ?? "" }}';
 const DELETE_BASE     = '{{ url("admin/media") }}';
 const IS_PICKER       = new URLSearchParams(window.location.search).get('picker') == '1';
+
+// ===== Lọc và Sắp xếp =====
+function changeSort(sort) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', sort);
+    window.location.href = url.toString();
+}
 
 // ===== Tìm kiếm =====
 document.getElementById('searchInput').addEventListener('input', function(e) {

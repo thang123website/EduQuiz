@@ -1,0 +1,11 @@
+Mã Nhóm,Loại câu hỏi,Nội dung câu hỏi,Các đáp án,Vị trí đáp án đúng,Điểm mặc định,Giải thích,Độ khó,Media URL,Loại Media,Extra Image URL
+,single_choice,Từ nào tiếng Anh có nghĩa là "Mẹ"?,Father|Mother|Brother|Sister,2,1.0,,easy,,,
+,single_choice,"What animal is this?",Dog|Cat|Pig|Cow,1,1.0,"This is a dog.",easy,https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=400,image,
+,single_choice,"Who is he?",He is my grandfather|He is my grandmother|He is my sister|He is my mother,1,1.0,Ông là grandfather,medium,https://images.unsplash.com/photo-1544717302-de2939b7ef71?q=80&w=400,image,
+,single_choice,Chọn từ còn thiếu: I have a ___ (con mèo).,cat|dog|bird|fish,1,1.0,,easy,,,
+,single_choice,"Từ nào tiếng Anh có nghĩa là ""Bố""?",Mother|Father|Sister|Baby,2,1.0,,easy,,,
+,single_choice,"This is my ___ (Anh trai)",Sister|Brother|Mother|Father,2,1.0,,easy,,,
+,single_choice,"Con lợn tiếng Anh là gì?",Pig|Dog|Cat|Cow,1,1.0,,easy,https://images.unsplash.com/photo-1516467508483-a7212febe31a?q=80&w=400,image,
+,multiple_answer,"Chọn các con vật (Animals):",Dog|Cat|Apple|Pen,1|2,1.0,Chó và mèo là con vật,medium,,,
+,single_choice,"My ___ (Bà) is kind.",grandmother|grandfather|brother|father,1,1.0,,easy,,,
+,single_choice,"What animal says ""quack quack""?",Dog|Cat|Duck|Pig,3,1.0,Con vịt kêu quác quác,medium,,,

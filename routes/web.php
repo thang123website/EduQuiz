@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home-landing');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -76,7 +76,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
 
     // Quiz Management
     Route::resource('quiz-categories', \App\Http\Controllers\Admin\QuizCategoryController::class);
+    Route::resource('tags', \App\Http\Controllers\Admin\TagController::class);
     Route::resource('quizzes', \App\Http\Controllers\Admin\QuizController::class);
+    Route::post('quizzes/{quiz}/parts', [\App\Http\Controllers\Admin\QuizPartController::class, 'store'])->name('quizzes.parts.store');
+    Route::post('quizzes/parts/{part}/import-questions', [\App\Http\Controllers\Admin\QuestionImportController::class, 'import'])->name('quizzes.parts.import-questions');
+    Route::post('quiz-parts/reorder', [\App\Http\Controllers\Admin\QuizPartController::class, 'reorder'])->name('quiz-parts.reorder');
+    Route::put('quiz-parts/{part}', [\App\Http\Controllers\Admin\QuizPartController::class, 'update'])->name('quiz-parts.update');
+    Route::delete('quiz-parts/{part}', [\App\Http\Controllers\Admin\QuizPartController::class, 'destroy'])->name('quiz-parts.destroy');
     Route::resource('quiz-attempts', \App\Http\Controllers\Admin\QuizAttemptController::class)->only(['index', 'show', 'destroy']);
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only(['show', 'store', 'update', 'destroy']);
 });

@@ -1,0 +1,11 @@
+Mã Nhóm,Loại câu hỏi,Nội dung câu hỏi,Các đáp án,Vị trí đáp án đúng,Điểm mặc định,Giải thích,Độ khó,Media URL,Loại Media,Extra Image URL
+,single_choice,1 + 1 bằng mấy?,1|2|3|4,2,1.0,1 + 1 = 2,easy,,,
+,single_choice,5 - 2 bằng mấy?,2|3|4|5,2,1.0,5 - 2 = 3,easy,,,
+,single_choice,Điền số thích hợp: 3 + ... = 7,3|4|5|6,2,1.0,3 + 4 = 7,medium,,,
+,single_choice,Trong đĩa có 4 quả táo mẹ cho thêm 2 quả. Hỏi có tất cả mấy quả táo?,4|5|6|7,3,1.0,4 + 2 = 6 quả táo,medium,https://images.unsplash.com/photo-1560806887-1e4cd0b6fac6?w=400,image,
+,multiple_answer,Chọn các phép tính có kết quả bằng 10:,5 + 5|8 + 1|6 + 4|7 + 2,1|3,1.0,"5+5=10, 6+4=10",medium,,,
+,single_choice,10 - 5 bằng mấy?,3|4|5|6,3,1.0,10 - 5 = 5,easy,,,
+,single_choice,Dấu nào thích hợp: 5 ... 4 = 9,+|-|=|<,1,1.0,5 + 4 = 9 nên điền dấu cộng,medium,,,
+,single_choice,8 - 4 bằng mấy?,2|3|4|5,3,1.0,8 - 4 = 4,easy,,,
+,single_choice,Có 5 con chim bay đi 2 con. Còn lại mấy con?,1|2|3|4,3,1.0,5 - 2 = 3 con chim,medium,https://images.unsplash.com/photo-1444464666168-49b626f86a0e?q=80&w=400,image,
+,single_choice,Số liền trước số 6 là số mấy?,4|5|7|8,2,1.0,,easy,,,

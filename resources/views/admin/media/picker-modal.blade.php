@@ -29,6 +29,11 @@
                     <div class="flex-grow-1 d-flex flex-column bg-white">
                         <!-- Toolbar -->
                         <div class="p-3 border-bottom d-flex align-items-center gap-3 bg-white sticky-top">
+                            <select class="form-select form-select-sm border-light bg-light" style="width: auto;" id="pickerSortSelect" onchange="changePickerSort()">
+                                <option value="newest">Mới nhất</option>
+                                <option value="oldest">Cũ nhất</option>
+                            </select>
+
                             <div class="input-group input-group-sm" style="width: 250px;">
                                 <span class="input-group-text bg-light border-light"><i class="ri-search-line"></i></span>
                                 <input type="text" class="form-control bg-light border-light" id="pickerSearchInput" placeholder="Tìm tên ảnh...">
@@ -220,6 +225,7 @@ let _pickerSelectedUrl = null;
 let _pickerSelectedFullUrl = null;
 let _pickerCurrentFolder = '';
 let _pickerSearchQuery = '';
+let _pickerSortOrder = 'newest';
 let _pickerCurrentPage = 1;
 const _pickerDeleteBase = '{{ url("admin/media") }}';
 
@@ -286,6 +292,7 @@ async function loadPickerFiles(page = 1) {
         let url = `${PATH_ROOT}/admin/media/files?page=${page}`;
         if (_pickerCurrentFolder) url += `&folder_id=${_pickerCurrentFolder}`;
         if (_pickerSearchQuery) url += `&search=${_pickerSearchQuery}`;
+        if (_pickerSortOrder) url += `&sort=${_pickerSortOrder}`;
 
         const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
         const data = await res.json();
@@ -385,6 +392,12 @@ document.getElementById('pickerSearchInput').oninput = (e) => {
     clearTimeout(window._pickerSearchTimer);
     window._pickerSearchTimer = setTimeout(() => loadPickerFiles(1), 500);
 };
+
+// Xử lý Sort
+function changePickerSort() {
+    _pickerSortOrder = document.getElementById('pickerSortSelect').value;
+    loadPickerFiles(1);
+}
 
 // Upload nhanh
 async function pickerUploadFiles(files) {

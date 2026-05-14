@@ -29,8 +29,10 @@ class QuizPart extends Model
     /**
      * Questions in this part.
      */
-    public function questions(): HasMany
+    public function questions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->hasMany(Question::class, 'part_id')->orderBy('order_idx');
+        return $this->belongsToMany(Question::class, 'question_quiz_part', 'part_id', 'question_id')
+                    ->withPivot('order_idx', 'mark')
+                    ->orderByPivot('order_idx', 'asc');
     }
 }

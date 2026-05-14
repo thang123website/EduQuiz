@@ -1,0 +1,6 @@
+﻿Mã Nhóm,Loại câu hỏi,Nội dung câu hỏi,Các đáp án,Vị trí đáp án đúng,Điểm mặc định,Giải thích,Độ khó,Media URL,Loại Media,Extra Image URL
+,single_choice,Ví dụ 1: Câu hỏi độc lập (Không thuộc nhóm). Thủ đô của Việt Nam là?,Hà Nội|Đà Nẵng|Huế|TP.HCM,1,1.0,Hà Nội là thủ đô của Việt Nam.,easy,,, 
+,multiple_answer,Ví dụ 2: Nhiều đáp án đúng. Chọn các số chẵn:,1|2|3|4,2|4,2.0,2 và 4 chia hết cho 2.,medium,,, 
+PART3_01,group,Ví dụ 3: CÂU HỎI NHÓM. (Đoạn này chỉ chứa Audio/Đoạn văn - không có đáp án),,,,,,medium,https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg,audio, 
+PART3_01,single_choice,Câu con 1 (Thuộc nhóm PART3_01): Người phụ nữ nói gì?,A. Xin chào|B. Tạm biệt|C. Xin lỗi|D. Cảm ơn,1,1.0,,medium,,, 
+PART3_01,single_choice,Câu con 2 (Thuộc nhóm PART3_01): Người đàn ông gợi ý gì?,A. Ở nhà|B. Đi chơi|C. Mua sắm|D. Đi làm,2,1.0,,medium,,, 

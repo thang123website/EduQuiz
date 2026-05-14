@@ -25,7 +25,7 @@ class QuizController extends Controller
         $filters = $request->only(['category_id', 'status', 'search', 'sort_by', 'sort_order', 'per_page']);
         $result = $this->repository->getPaginatedForAdmin($filters);
         
-        $categories = QuizCategory::where('is_active', true)->orderBy('name')->get();
+        $categories = app(\App\Repositories\CategoryRepository::class)->getFlatTree(true);
 
         return view('admin.quizzes.index', [
             'quizzes' => $result['data'],
@@ -43,8 +43,9 @@ class QuizController extends Controller
             abort(403, 'Bạn không có quyền tạo đề thi.');
         }
 
-        $categories = QuizCategory::where('is_active', true)->orderBy('name')->get();
-        return view('admin.quizzes.create', compact('categories'));
+        $categories = app(\App\Repositories\CategoryRepository::class)->getFlatTree(true);
+        $tags = \App\Models\Tag::orderBy('name')->get();
+        return view('admin.quizzes.create', compact('categories', 'tags'));
     }
 
     /**
@@ -61,6 +62,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'thumbnail' => 'nullable|string|max:500',
+            'type' => 'required|in:full_test,practice,minitest',
             'duration' => 'required|integer|min:1',
             'pass_mark' => 'required|integer|min:0|max:100',
             'difficulty' => 'required|in:easy,medium,hard',
@@ -69,6 +71,17 @@ class QuizController extends Controller
         ]);
 
         $quiz = Quiz::create($validated);
+        
+        if ($request->has('tags')) {
+            $quiz->tags()->sync($request->input('tags'));
+        }
+
+        // Tự động tạo 1 Part mặc định cho các bài thi cơ bản không cần chia phần
+        $quiz->parts()->create([
+            'title' => 'Nội dung bài thi',
+            'description' => 'Phần thi mặc định',
+            'order_idx' => 1
+        ]);
 
         return redirect()->route('admin.quizzes.edit', $quiz->id)
             ->with('success', 'Tạo đề thi thành công. Hãy bắt đầu thêm câu hỏi.');
@@ -83,10 +96,11 @@ class QuizController extends Controller
             abort(403, 'Bạn không có quyền chỉnh sửa đề thi.');
         }
 
-        $quiz = Quiz::with(['questions.options', 'questions.children.options'])->findOrFail($id);
-        $categories = QuizCategory::where('is_active', true)->orderBy('name')->get();
+        $quiz = Quiz::with(['parts.questions.options', 'parts.questions.children.options', 'tags'])->findOrFail($id);
+        $categories = app(\App\Repositories\CategoryRepository::class)->getFlatTree(true);
+        $tags = \App\Models\Tag::orderBy('name')->get();
         
-        return view('admin.quizzes.edit', compact('quiz', 'categories'));
+        return view('admin.quizzes.edit', compact('quiz', 'categories', 'tags'));
     }
 
     /**
@@ -105,6 +119,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'thumbnail' => 'nullable|string|max:500',
+            'type' => 'required|in:full_test,practice,minitest',
             'duration' => 'required|integer|min:1',
             'pass_mark' => 'required|integer|min:0|max:100',
             'difficulty' => 'required|in:easy,medium,hard',
@@ -113,6 +128,12 @@ class QuizController extends Controller
         ]);
 
         $quiz->update($validated);
+
+        if ($request->has('tags')) {
+            $quiz->tags()->sync($request->input('tags'));
+        } else {
+            $quiz->tags()->detach();
+        }
 
         return redirect()->back()
             ->with('success', 'Cập nhật đề thi thành công');

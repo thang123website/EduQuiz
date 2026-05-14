@@ -17,6 +17,7 @@ class Quiz extends Model
         'title',
         'description',
         'thumbnail',
+        'type',
         'duration',
         'pass_mark',
         'difficulty',
@@ -43,11 +44,11 @@ class Quiz extends Model
     }
 
     /**
-     * Questions in this quiz.
+     * Get all questions by flattening parts (Accessor)
      */
-    public function questions(): HasMany
+    public function getQuestionsAttribute()
     {
-        return $this->hasMany(Question::class)->orderBy('order_idx');
+        return $this->parts->flatMap->questions;
     }
 
     /**
