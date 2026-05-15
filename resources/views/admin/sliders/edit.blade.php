@@ -109,7 +109,12 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5 class="fs-14 mb-1 text-dark">{{ $item->title ?: 'Không có tiêu đề' }}</h5>
+                                        <h5 class="fs-14 mb-1 text-dark">
+                                            {{ $item->title ?: 'Không có tiêu đề' }}
+                                            @if($item->is_highlight)
+                                                <span class="badge bg-danger-subtle text-danger ms-1">Nổi bật</span>
+                                            @endif
+                                        </h5>
                                         <p class="text-muted mb-0 fs-12">{{ Str::limit($item->description, 50) }}</p>
                                     </td>
                                     <td>
@@ -196,9 +201,17 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-8">
+                        <div class="col-lg-5">
                             <label for="item-title" class="form-label fw-semibold">Tiêu đề Slide</label>
                             <input type="text" class="form-control" id="item-title" placeholder="Nhập tiêu đề hiển thị...">
+                        </div>
+
+                        <div class="col-lg-3">
+                            <label class="form-label fw-semibold">Nổi bật</label>
+                            <div class="form-check form-switch form-switch-md">
+                                <input type="checkbox" class="form-check-input" id="item-highlight">
+                                <label class="form-check-label" for="item-highlight">Đánh dấu nổi bật</label>
+                            </div>
                         </div>
 
                         <div class="col-lg-4">
@@ -355,6 +368,7 @@
         document.getElementById('item-link').value = '';
         document.getElementById('item-description').value = '';
         document.getElementById('item-status').value = 'active';
+        document.getElementById('item-highlight').checked = false;
 
         document.getElementById('img-preview').src = '';
         document.getElementById('img-preview').classList.add('d-none');
@@ -366,6 +380,7 @@
             document.getElementById('item-link').value = itemData.link ?? '';
             document.getElementById('item-description').value = itemData.description ?? '';
             document.getElementById('item-status').value = itemData.status ?? 'active';
+            document.getElementById('item-highlight').checked = itemData.is_highlight ? true : false;
             document.getElementById('item-image').value = itemData.image ?? '';
             
             if (itemData.image) {
@@ -390,6 +405,7 @@
             link: document.getElementById('item-link').value,
             description: document.getElementById('item-description').value,
             status: document.getElementById('item-status').value,
+            is_highlight: document.getElementById('item-highlight').checked ? 1 : 0,
         };
 
         const url = currentItemId ? `${API_BASE}/${currentItemId}` : API_BASE;

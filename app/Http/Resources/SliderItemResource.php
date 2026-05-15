@@ -15,6 +15,7 @@ class SliderItemResource extends JsonResource
             'image_url' => $this->image_url,
             'link' => $this->link,
             'order' => $this->order,
+            'is_highlight' => (bool) $this->is_highlight,
         ];
     }
 }

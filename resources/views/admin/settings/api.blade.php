@@ -77,6 +77,23 @@
                     </div>
 
                     <div class="border rounded p-3 bg-light mb-4">
+                        <h6 class="fs-13 fw-bold mb-1">API Caching Settings</h6>
+                        <p class="text-muted fs-13 mb-3">Optimize API performance by caching responses. If disabled, every request will query the database directly.</p>
+                        
+                        <div class="form-check form-switch form-switch-md mb-3">
+                            <input type="hidden" name="api_cache_enabled" value="0">
+                            <input type="checkbox" class="form-check-input" id="api_cache_enabled" name="api_cache_enabled" value="1" {{ \App\Models\Setting::get('api_cache_enabled', 0) == '1' ? 'checked' : '' }}>
+                            <label class="form-check-label fw-bold" for="api_cache_enabled">Enable API Cache</label>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold" for="api_cache_duration">Cache Duration (seconds)</label>
+                            <input type="number" class="form-control" id="api_cache_duration" name="api_cache_duration" value="{{ \App\Models\Setting::get('api_cache_duration', 3600) }}" min="1">
+                            <div class="mt-1 text-muted fs-13">The number of seconds to store API responses in cache. Example: 3600 for 1 hour.</div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded p-3 bg-light mb-4">
                         <h6 class="fs-13 fw-bold mb-1">Push Notifications (FCM v1 API)</h6>
                         <p class="text-muted fs-13 mb-3">Send push notifications to your mobile app users via Firebase Cloud Messaging. This requires a mobile app that registers device tokens with your API.</p>
                         

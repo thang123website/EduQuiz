@@ -15,6 +15,11 @@ class SliderItem extends Model
         'description',
         'order',
         'status',
+        'is_highlight',
+    ];
+
+    protected $casts = [
+        'is_highlight' => 'boolean',
     ];
 
     protected $appends = ['image_url'];

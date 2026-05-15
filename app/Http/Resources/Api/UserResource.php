@@ -5,6 +5,7 @@ namespace App\Http\Resources\Api;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Setting;
 
 class UserResource extends JsonResource
 {
@@ -29,6 +30,7 @@ class UserResource extends JsonResource
             'cover_photo' => $this->cover_photo ? asset(Storage::url($this->cover_photo)) : null,
             'status' => $this->status,
             'is_banned' => (bool) $this->ban,
+            'timezone' => $this->timezone ?? Setting::get('system_timezone', 'Asia/Ho_Chi_Minh'),
         ];
     }
 }

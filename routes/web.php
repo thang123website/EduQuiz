@@ -85,6 +85,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::delete('quiz-parts/{part}', [\App\Http\Controllers\Admin\QuizPartController::class, 'destroy'])->name('quiz-parts.destroy');
     Route::resource('quiz-attempts', \App\Http\Controllers\Admin\QuizAttemptController::class)->only(['index', 'show', 'destroy']);
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only(['show', 'store', 'update', 'destroy']);
+
+    // Forms Management
+    Route::resource('forms', \App\Http\Controllers\Admin\FormSubmissionController::class)->except(['create', 'store', 'edit']);
+    Route::put('forms/{form}/status', [\App\Http\Controllers\Admin\FormSubmissionController::class, 'updateStatus'])->name('forms.update-status');
 });
 
 // Public Comments

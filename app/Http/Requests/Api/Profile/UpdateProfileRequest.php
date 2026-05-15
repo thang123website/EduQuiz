@@ -34,6 +34,7 @@ class UpdateProfileRequest extends FormRequest
             'longitude' => ['sometimes', 'nullable', 'string', 'max:50'],
             'avatar' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'cover_photo' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:4096'],
+            'timezone' => ['sometimes', 'nullable', 'string', 'timezone'],
         ];
     }
 
@@ -51,6 +52,7 @@ class UpdateProfileRequest extends FormRequest
             'cover_photo.image' => 'Ảnh bìa phải là một tệp hình ảnh.',
             'cover_photo.mimes' => 'Ảnh bìa phải có định dạng jpeg, png, jpg, gif, svg, webp.',
             'cover_photo.max' => 'Dung lượng ảnh bìa không được vượt quá 4MB.',
+            'timezone.timezone' => 'Múi giờ không hợp lệ (ví dụ: Asia/Ho_Chi_Minh).',
         ];
     }
 }

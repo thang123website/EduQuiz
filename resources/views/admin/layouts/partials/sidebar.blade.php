@@ -131,6 +131,13 @@
                 </li>
                 @endcan
 
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Dịch vụ & Khách hàng</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.forms.*') ? 'active' : '' }}" href="{{ route('admin.forms.index') }}">
+                        <i class="ri-survey-line"></i> <span>Yêu cầu / Form</span>
+                    </a>
+                </li>
+
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>Thông báo</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.notifications.*') ? 'true' : 'false' }}" aria-controls="sidebarNotifications">

@@ -123,6 +123,7 @@ class SliderController extends Controller
             'link'        => 'nullable|url|max:500',
             'description' => 'nullable|string|max:500',
             'status'      => 'required|in:active,inactive',
+            'is_highlight'=> 'boolean',
         ]);
 
         $item = $this->sliderService->saveItem($slider, $validated);
@@ -150,6 +151,7 @@ class SliderController extends Controller
             'link'        => 'nullable|url|max:500',
             'description' => 'nullable|string|max:500',
             'status'      => 'required|in:active,inactive',
+            'is_highlight'=> 'boolean',
         ]);
 
         $item = $this->sliderService->saveItem($slider, $validated, $item);

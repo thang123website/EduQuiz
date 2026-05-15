@@ -16,9 +16,11 @@ Route::middleware([\App\Http\Middleware\VerifyApiKeyMiddleware::class])->group(f
 
     // Blogs
     Route::get('v1/blogs', [\App\Http\Controllers\Api\BlogController::class, 'index']);
+    Route::get('v1/blogs/latest', [\App\Http\Controllers\Api\BlogController::class, 'latest']);
     Route::get('v1/blogs/popular', [\App\Http\Controllers\Api\BlogController::class, 'popular']);
     Route::get('v1/blogs/{slug}/related', [\App\Http\Controllers\Api\BlogController::class, 'related']);
     Route::get('v1/blogs/{slug}', [\App\Http\Controllers\Api\BlogController::class, 'show']);
+    Route::get('v1/blogs/{slug}/comments', [\App\Http\Controllers\Api\CommentController::class, 'index']);
 
     Route::prefix('v1/auth')->group(function () {
         Route::post('/login', [\App\Http\Controllers\Api\Auth\AuthController::class, 'login']);
@@ -36,6 +38,13 @@ Route::middleware([\App\Http\Middleware\VerifyApiKeyMiddleware::class])->group(f
         Route::post('/update', [\App\Http\Controllers\Api\ProfileController::class, 'update']);
     });
 
+    // Bình luận bài viết (Cần đăng nhập)
+    Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
+        Route::post('/blogs/{slug}/comments', [\App\Http\Controllers\Api\CommentController::class, 'store']);
+        Route::put('/comments/{id}', [\App\Http\Controllers\Api\CommentController::class, 'update']);
+        Route::delete('/comments/{id}', [\App\Http\Controllers\Api\CommentController::class, 'destroy']);
+    });
+
     Route::middleware('auth:sanctum')->prefix('v1/notifications')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\NotificationController::class, 'index']);
         Route::get('/unread-count', [\App\Http\Controllers\Api\NotificationController::class, 'unreadCount']);
@@ -43,4 +52,7 @@ Route::middleware([\App\Http\Middleware\VerifyApiKeyMiddleware::class])->group(f
         Route::post('/{id}/mark-as-read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);
         Route::delete('/{id}', [\App\Http\Controllers\Api\NotificationController::class, 'destroy']);
     });
+
+    // Form Submissions
+    Route::post('v1/forms/{type}', [\App\Http\Controllers\Api\FormSubmissionController::class, 'store'])->middleware('throttle:30,1');
 });

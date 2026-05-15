@@ -6,29 +6,51 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Http\Resources\BlogCategoryResource;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Setting;
 
 class BlogCategoryController extends Controller
 {
     public function index()
     {
-        // Lấy danh sách category dạng cây (đã flatten) và đếm số bài viết
-        $categories = Cache::remember('api_blog_categories_tree', 3600, function () {
-            return BlogCategory::getTree();
-        });
+        $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
+        $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
+
+        $fetchData = function () {
+            $categories = BlogCategory::getTree();
+            return json_decode(BlogCategoryResource::collection($categories)->toJson(), true);
+        };
+
+        if ($cacheEnabled && $cacheDuration > 0) {
+            $data = Cache::remember('api_blog_categories_tree', $cacheDuration, $fetchData);
+        } else {
+            $data = $fetchData();
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => BlogCategoryResource::collection($categories)
+            'data' => $data
         ]);
     }
 
     public function show($slug)
     {
-        $category = BlogCategory::where('slug', $slug)->firstOrFail();
-        
+        $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
+        $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
+
+        $fetchData = function () use ($slug) {
+            $category = BlogCategory::where('slug', $slug)->firstOrFail();
+            return json_decode((new BlogCategoryResource($category))->toJson(), true);
+        };
+
+        if ($cacheEnabled && $cacheDuration > 0) {
+            $data = Cache::remember("api_blog_category_{$slug}", $cacheDuration, $fetchData);
+        } else {
+            $data = $fetchData();
+        }
+
         return response()->json([
             'status' => 'success',
-            'data' => new BlogCategoryResource($category)
+            'data' => $data
         ]);
     }
 }

@@ -56,9 +56,17 @@
                                     <label class="form-label fw-semibold">Địa chỉ trụ sở</label>
                                     <textarea name="site_address" class="form-control" rows="2">{{ \App\Models\Setting::get('site_address') }}</textarea>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <label class="form-label fw-semibold">Thông tin bản quyền (Footer)</label>
                                     <input type="text" name="site_copyright" class="form-control" value="{{ \App\Models\Setting::get('site_copyright') }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Múi giờ hệ thống (Mặc định)</label>
+                                    <select name="system_timezone" class="form-select" data-choices data-choices-search-true>
+                                        @foreach(timezone_identifiers_list() as $tz)
+                                            <option value="{{ $tz }}" {{ \App\Models\Setting::get('system_timezone', 'Asia/Ho_Chi_Minh') == $tz ? 'selected' : '' }}>{{ $tz }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>

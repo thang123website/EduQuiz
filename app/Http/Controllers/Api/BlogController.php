@@ -8,6 +8,7 @@ use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use App\Http\Resources\BlogLightResource;
 use App\Http\Resources\BlogDetailResource;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 
 class BlogController extends Controller
@@ -20,29 +21,51 @@ class BlogController extends Controller
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categorySlug = $request->input('category_slug');
+        $sortBy = $request->input('sort_by', 'latest'); // latest, oldest, popular
 
         $query = Blog::with(['category', 'author'])
             ->where('status', 'publish');
 
         if ($search) {
-            $query->where('title', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         if ($categorySlug) {
-            $category = BlogCategory::where('slug', $categorySlug)->first();
-            if ($category) {
-                // Lấy cả bài viết của danh mục con nếu dùng tree
-                $categoryIds = BlogCategory::where('parent_id', $category->id)->pluck('id')->toArray();
-                $categoryIds[] = $category->id;
-                $query->whereIn('category_id', $categoryIds);
+            // Chuyển đổi thành mảng nếu truyền vào là chuỗi cách nhau bằng dấu phẩy
+            if (is_string($categorySlug)) {
+                $categorySlug = explode(',', $categorySlug);
+            }
+            
+            $categories = BlogCategory::whereIn('slug', $categorySlug)->get();
+            
+            if ($categories->isNotEmpty()) {
+                // Lấy ID của các danh mục cha
+                $parentIds = $categories->pluck('id')->toArray();
+                // Lấy ID của tất cả danh mục con tương ứng
+                $childrenIds = BlogCategory::whereIn('parent_id', $parentIds)->pluck('id')->toArray();
+                
+                $allCategoryIds = array_unique(array_merge($parentIds, $childrenIds));
+                $query->whereIn('category_id', $allCategoryIds);
             } else {
-                // Trả về mảng rỗng nếu category không tồn tại
+                // Trả về mảng rỗng nếu không có category nào tồn tại
                 $query->where('id', 0);
             }
         }
 
-        // Lấy bài viết mới nhất
-        $blogs = $query->orderBy('created_at', 'desc')->paginate($limit);
+        // Xử lý sắp xếp
+        if ($sortBy === 'popular') {
+            $query->orderBy('visit_count', 'desc');
+        } elseif ($sortBy === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            // Mặc định là mới nhất
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $blogs = $query->paginate($limit);
 
         return BlogLightResource::collection($blogs)->additional([
             'status' => 'success',
@@ -57,17 +80,61 @@ class BlogController extends Controller
         $limit = $request->input('limit', 5);
         $cacheKey = "api_blogs_popular_{$limit}";
 
-        $blogs = Cache::remember($cacheKey, 3600, function () use ($limit) {
-            return Blog::with(['category', 'author'])
+        $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
+        $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
+
+        $fetchData = function () use ($limit) {
+            $blogs = Blog::with(['category', 'author'])
                 ->where('status', 'publish')
                 ->orderBy('visit_count', 'desc')
                 ->limit($limit)
                 ->get();
-        });
+                
+            return json_decode(BlogLightResource::collection($blogs)->toJson(), true);
+        };
+
+        if ($cacheEnabled && $cacheDuration > 0) {
+            $data = Cache::remember($cacheKey, $cacheDuration, $fetchData);
+        } else {
+            $data = $fetchData();
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => BlogLightResource::collection($blogs)
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Lấy bài viết mới nhất (Dạng array không phân trang, có cache)
+     */
+    public function latest(Request $request)
+    {
+        $limit = $request->input('limit', 5);
+        $cacheKey = "api_blogs_latest_{$limit}";
+
+        $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
+        $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
+
+        $fetchData = function () use ($limit) {
+            $blogs = Blog::with(['category', 'author'])
+                ->where('status', 'publish')
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get();
+                
+            return json_decode(BlogLightResource::collection($blogs)->toJson(), true);
+        };
+
+        if ($cacheEnabled && $cacheDuration > 0) {
+            $data = Cache::remember($cacheKey, $cacheDuration, $fetchData);
+        } else {
+            $data = $fetchData();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 

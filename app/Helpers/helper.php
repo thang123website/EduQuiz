@@ -5,6 +5,8 @@ use App\Models\NotificationHistory;
 use App\Notifications\GeneralNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Setting;
+use Carbon\Carbon;
 
 if (!function_exists('sendNotification')) {
     /**
@@ -65,5 +67,29 @@ if (!function_exists('sendNotification')) {
             \Log::error("Helper sendNotification Error: " . $e->getMessage());
             return false;
         }
+    }
+}
+
+if (!function_exists('display_datetime')) {
+    /**
+     * Chuyển đổi thời gian UTC sang múi giờ của hệ thống hoặc của user hiện tại
+     * 
+     * @param mixed $carbonDate
+     * @param string $format
+     * @return string
+     */
+    function display_datetime($carbonDate, $format = 'd/m/Y H:i:s')
+    {
+        if (!$carbonDate) return '';
+        
+        $timezone = 'Asia/Ho_Chi_Minh'; // Default fallback
+        
+        if (auth()->check() && auth()->user()->timezone) {
+            $timezone = auth()->user()->timezone;
+        } else {
+            $timezone = Setting::get('system_timezone', 'Asia/Ho_Chi_Minh');
+        }
+        
+        return Carbon::parse($carbonDate)->timezone($timezone)->format($format);
     }
 }
