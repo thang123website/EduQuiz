@@ -47,12 +47,18 @@ class QuizAttemptController extends Controller
             $attempt = QuizAttempt::create([
                 'user_id' => $userId,
                 'quiz_id' => $quizId,
+                'part_ids' => !empty($partIds) ? $partIds : null,
                 'status' => 'in_progress',
                 'score' => 0,
                 'correct_count' => 0,
-                'total_count' => $quiz->question_count, // Will refine if part_ids are provided
+                'total_count' => 0, // Will be calculated after loading parts
                 'time_spent' => 0,
             ]);
+        }
+
+        // Ensure part_ids are updated if an old attempt is reused
+        if ($attempt && empty($attempt->part_ids) && !empty($partIds)) {
+            $attempt->update(['part_ids' => $partIds]);
         }
 
         // Load Parts and Questions
@@ -60,7 +66,7 @@ class QuizAttemptController extends Controller
         // and nested children inside.
         $partsQuery = $quiz->parts();
         
-        if (!empty($partIds) && $quiz->type === 'practice') {
+        if (!empty($partIds)) {
             // Filter by requested parts
             $partsQuery->whereIn('id', $partIds);
         }
@@ -72,6 +78,23 @@ class QuizAttemptController extends Controller
                       ->with(['options', 'children.options']); // Eager load children and options
             }
         ])->get();
+
+        // Calculate actual total count based on loaded parts
+        $totalQuestions = 0;
+        foreach ($parts as $part) {
+            foreach ($part->questions as $question) {
+                if ($question->children->isNotEmpty()) {
+                    $totalQuestions += $question->children->count();
+                } else {
+                    $totalQuestions += 1;
+                }
+            }
+        }
+
+        // Update total_count on attempt
+        if ($attempt->total_count !== $totalQuestions) {
+            $attempt->update(['total_count' => $totalQuestions]);
+        }
 
         return response()->json([
             'status' => 'success',
@@ -241,8 +264,14 @@ class QuizAttemptController extends Controller
             ->where('user_id', $userId)
             ->firstOrFail();
 
+        // Build parts query based on what the user attempted
+        $partsQuery = $attempt->quiz->parts();
+        if (!empty($attempt->part_ids)) {
+            $partsQuery->whereIn('id', $attempt->part_ids);
+        }
+
         // Load Parts, Questions, and the User's Responses
-        $parts = $attempt->quiz->parts()->with([
+        $parts = $partsQuery->with([
             'questions' => function ($query) use ($attemptId) {
                 $query->whereNull('parent_id')
                       ->with([

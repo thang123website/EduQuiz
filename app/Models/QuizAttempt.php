@@ -16,11 +16,16 @@ class QuizAttempt extends Model
     protected $fillable = [
         'user_id',
         'quiz_id',
+        'part_ids',
         'score',
         'correct_count',
         'total_count',
         'time_spent',
         'status',
+    ];
+
+    protected $casts = [
+        'part_ids' => 'array',
     ];
 
     /**

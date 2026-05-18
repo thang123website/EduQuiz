@@ -52,11 +52,19 @@ class UserDashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $attempts->map(function ($attempt) {
+                $title = $attempt->quiz->title;
+                if (!empty($attempt->part_ids)) {
+                    $partTitles = \App\Models\QuizPart::whereIn('id', $attempt->part_ids)->pluck('title')->toArray();
+                    if (!empty($partTitles)) {
+                        $title .= ' (' . implode(', ', $partTitles) . ')';
+                    }
+                }
+
                 return [
                     'id' => $attempt->id,
                     'quiz' => [
                         'id' => $attempt->quiz->id,
-                        'title' => $attempt->quiz->title,
+                        'title' => $title,
                         'thumbnail' => $attempt->quiz->thumbnail ? get_image_url($attempt->quiz->thumbnail) : null,
                         'type' => $attempt->quiz->type,
                     ],
