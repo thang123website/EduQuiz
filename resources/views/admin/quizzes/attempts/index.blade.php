@@ -23,6 +23,11 @@
             <div class="card-header border-0">
                 <div class="d-flex align-items-center">
                     <h5 class="card-title mb-0 flex-grow-1">Tất cả lượt thi</h5>
+                    <div class="flex-shrink-0" id="bulk-delete-container" style="display: none;">
+                        <button class="btn btn-soft-danger" onClick="deleteMultiple()">
+                            <i class="ri-delete-bin-2-line"></i> Xóa đã chọn (<span id="selected-count">0</span>)
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="card-body border border-dashed border-end-0 border-start-0">
@@ -70,6 +75,11 @@
                     <table class="table align-middle table-nowrap mb-0">
                         <thead class="table-light text-muted">
                             <tr>
+                                <th scope="col" style="width: 50px;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="checkAll" value="option">
+                                    </div>
+                                </th>
                                 <th>Thí sinh</th>
                                 <th>Đề thi</th>
                                 <th>Kết quả</th>
@@ -82,6 +92,11 @@
                         <tbody>
                             @forelse($attempts as $attempt)
                             <tr>
+                                <th scope="row">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="chk_child" value="{{ $attempt->id }}">
+                                    </div>
+                                </th>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <img src="{{ $attempt->user->avatar_url }}" class="avatar-xs rounded-circle me-2" alt="">
@@ -108,7 +123,7 @@
                                     @endphp
                                     {{ $min > 0 ? $min . ' phút ' : '' }}{{ $sec }} giây
                                 </td>
-                                <td>{{ $attempt->created_at->format('H:i d/m/Y') }}</td>
+                                <td>{{ display_datetime($attempt->created_at, 'H:i d/m/Y') }}</td>
                                 <td>
                                     @if($attempt->status == 'passed')
                                         <span class="badge bg-success text-uppercase">Passed</span>
@@ -139,7 +154,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="8" class="text-center py-5">
                                     <h5 class="mt-2 text-muted">Chưa có lượt thi nào</h5>
                                 </td>
                             </tr>
@@ -155,3 +170,108 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkAll = document.getElementById('checkAll');
+        const checkboxes = document.querySelectorAll('input[name="chk_child"]');
+        const bulkDeleteContainer = document.getElementById('bulk-delete-container');
+        const selectedCount = document.getElementById('selected-count');
+
+        if(checkAll) {
+            checkAll.addEventListener('change', function() {
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = checkAll.checked;
+                });
+                toggleRemoveActions();
+            });
+        }
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', toggleRemoveActions);
+        });
+
+        function toggleRemoveActions() {
+            const checkedCount = document.querySelectorAll('input[name="chk_child"]:checked').length;
+            if(checkedCount > 0) {
+                bulkDeleteContainer.style.display = 'block';
+                selectedCount.innerText = checkedCount;
+            } else {
+                bulkDeleteContainer.style.display = 'none';
+                selectedCount.innerText = '0';
+                if(checkAll) checkAll.checked = false;
+            }
+        }
+    });
+
+    // Make it global so onClick can access it
+    function deleteMultiple() {
+        const checkedCheckboxes = document.querySelectorAll('input[name="chk_child"]:checked');
+        if(checkedCheckboxes.length === 0) {
+            alert('Vui lòng chọn ít nhất 1 dòng.');
+            return;
+        }
+
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Bạn sẽ không thể khôi phục dữ liệu đã xóa!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-primary w-xs me-2 mt-2',
+            cancelButtonClass: 'btn btn-danger w-xs mt-2',
+            confirmButtonText: "Đúng, xóa nó!",
+            cancelButtonText: "Hủy",
+            buttonsStyling: false,
+            showCloseButton: true
+        }).then(function (result) {
+            if (result.value) {
+                const ids = Array.from(checkedCheckboxes).map(cb => cb.value);
+                
+                fetch('{{ route("admin.quiz-attempts.bulk-destroy") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: ids })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        Swal.fire({
+                            title: 'Đã xóa!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: data.message || 'Đã có lỗi xảy ra',
+                            icon: 'error',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã có lỗi xảy ra trong quá trình xử lý.',
+                        icon: 'error',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false
+                    });
+                });
+            }
+        });
+    }
+</script>
+@endpush
+

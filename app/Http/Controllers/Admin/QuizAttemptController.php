@@ -88,4 +88,27 @@ class QuizAttemptController extends Controller
 
         return redirect()->back()->with('success', 'Đã xóa lịch sử lượt thi này.');
     }
+
+    /**
+     * Bulk delete attempts.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        if (!auth()->user()->isAdmin() && !auth()->user()->hasPermission('quiz_attempt.delete')) {
+            return response()->json(['success' => false, 'message' => 'Bạn không có quyền xóa lịch sử thi.'], 403);
+        }
+
+        $ids = $request->input('ids', []);
+        
+        if (empty($ids)) {
+            return response()->json(['success' => false, 'message' => 'Vui lòng chọn ít nhất một lượt thi để xóa.'], 400);
+        }
+
+        QuizAttempt::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'Đã xóa thành công ' . count($ids) . ' lượt thi.'
+        ]);
+    }
 }

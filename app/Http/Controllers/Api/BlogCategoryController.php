@@ -20,8 +20,10 @@ class BlogCategoryController extends Controller
             return json_decode(BlogCategoryResource::collection($categories)->toJson(), true);
         };
 
+        $locale = app()->getLocale();
+
         if ($cacheEnabled && $cacheDuration > 0) {
-            $data = Cache::remember('api_blog_categories_tree', $cacheDuration, $fetchData);
+            $data = Cache::remember("api_blog_categories_tree_{$locale}", $cacheDuration, $fetchData);
         } else {
             $data = $fetchData();
         }
@@ -42,8 +44,10 @@ class BlogCategoryController extends Controller
             return json_decode((new BlogCategoryResource($category))->toJson(), true);
         };
 
+        $locale = app()->getLocale();
+
         if ($cacheEnabled && $cacheDuration > 0) {
-            $data = Cache::remember("api_blog_category_{$slug}", $cacheDuration, $fetchData);
+            $data = Cache::remember("api_blog_category_{$slug}_{$locale}", $cacheDuration, $fetchData);
         } else {
             $data = $fetchData();
         }

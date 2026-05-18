@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Translatable\HasTranslations;
 
 class Slider extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'name',
         'key',
@@ -18,6 +21,8 @@ class Slider extends Model
     protected $casts = [
         'settings' => 'array',
     ];
+
+    public $translatable = ['name', 'description'];
 
     /**
      * Danh sách các slide items thuộc nhóm này.

@@ -12,7 +12,9 @@
         "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
-        "rap2hpoutre/fast-excel": "^5.7"
+        "rap2hpoutre/fast-excel": "^5.7",
+        "spatie/laravel-translatable": "^6.14",
+        "stichoza/google-translate-php": "^5.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

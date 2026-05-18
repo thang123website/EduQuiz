@@ -69,4 +69,13 @@ class Question extends Model
     {
         return $this->belongsToMany(Tag::class, 'question_tag', 'question_id', 'tag_id');
     }
+
+    /**
+     * User responses for this question.
+     */
+    public function userResponses(): HasMany
+    {
+        return $this->hasMany(UserResponse::class, 'question_id');
+    }
 }
+

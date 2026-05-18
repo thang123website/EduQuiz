@@ -26,8 +26,10 @@ class SliderController extends Controller
             return json_decode((new SliderResource($slider))->toJson(), true);
         };
 
+        $locale = app()->getLocale();
+
         if ($cacheEnabled && $cacheDuration > 0) {
-            $data = Cache::remember("api_slider_{$key}", $cacheDuration, $fetchData);
+            $data = Cache::remember("api_slider_{$key}_{$locale}", $cacheDuration, $fetchData);
         } else {
             $data = $fetchData();
         }

@@ -12,6 +12,10 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/set-locale/{locale}', function ($locale) {
+    session()->put('locale', $locale);
+    return redirect()->back();
+})->name('set-locale');
 // Avatar mặc định tự động tạo
 Route::get('/getDefaultAvatar', [\App\Http\Controllers\DefaultAvatarController::class, 'make'])->name('default-avatar');
 Route::middleware(['auth'])->group(function () {
@@ -40,6 +44,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('/settings/mail/test', [\App\Http\Controllers\Admin\SettingController::class, 'testMailConnection'])->name('settings.mail.test');
     
     Route::get('/settings/api', [\App\Http\Controllers\Admin\SettingController::class, 'apiSettings'])->name('settings.api');
+
+    // Language Manager
+    Route::resource('languages', \App\Http\Controllers\Admin\LanguageController::class)->except(['show']);
+    Route::get('languages/{code}/translations', [\App\Http\Controllers\Admin\LanguageController::class, 'translations'])->name('languages.translations');
+    Route::post('languages/{code}/translations', [\App\Http\Controllers\Admin\LanguageController::class, 'updateTranslation'])->name('languages.translations.update');
+    Route::post('languages/{code}/translate-single', [\App\Http\Controllers\Admin\LanguageController::class, 'translateSingle'])->name('languages.translate-single');
+    Route::post('languages/auto-translate', [\App\Http\Controllers\Admin\LanguageController::class, 'autoTranslate'])->name('languages.auto-translate');
+    Route::post('languages/auto-translate-data', [\App\Http\Controllers\Admin\LanguageController::class, 'autoTranslateData'])->name('languages.auto-translate-data');
 
     // Media Manager
     Route::prefix('media')->name('media.')->group(function () {
@@ -83,6 +95,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::post('quiz-parts/reorder', [\App\Http\Controllers\Admin\QuizPartController::class, 'reorder'])->name('quiz-parts.reorder');
     Route::put('quiz-parts/{part}', [\App\Http\Controllers\Admin\QuizPartController::class, 'update'])->name('quiz-parts.update');
     Route::delete('quiz-parts/{part}', [\App\Http\Controllers\Admin\QuizPartController::class, 'destroy'])->name('quiz-parts.destroy');
+    Route::post('quiz-attempts/bulk-delete', [\App\Http\Controllers\Admin\QuizAttemptController::class, 'bulkDestroy'])->name('quiz-attempts.bulk-destroy');
     Route::resource('quiz-attempts', \App\Http\Controllers\Admin\QuizAttemptController::class)->only(['index', 'show', 'destroy']);
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class)->only(['show', 'store', 'update', 'destroy']);
 

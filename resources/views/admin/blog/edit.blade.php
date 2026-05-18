@@ -38,22 +38,14 @@
                         <h5 class="card-title mb-0">Nội dung bài viết</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $blog->title) }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="slug" class="form-label">Slug</label>
-                            <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug', $blog->slug) }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Mô tả ngắn</label>
-                            <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $blog->description) }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="content" class="form-label">Nội dung <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="content" name="content" rows="15">{{ old('content', $blog->content) }}</textarea>
-                        </div>
+                        <x-admin.lang-tabs 
+                            :model="$blog"
+                            :fields="[
+                                'title' => ['type' => 'text', 'label' => 'Tiêu đề', 'placeholder' => 'Nhập tiêu đề bài viết...', 'required' => true],
+                                'description' => ['type' => 'textarea', 'label' => 'Mô tả ngắn', 'placeholder' => 'Mô tả ngắn hiển thị ở trang danh sách...', 'rows' => 3],
+                                'content' => ['type' => 'textarea', 'label' => 'Nội dung', 'placeholder' => 'Nhập nội dung bài viết...', 'rows' => 15, 'required' => true, 'class' => 'quill-editor-textarea d-none']
+                            ]" 
+                        />
                     </div>
                 </div>
             </div>
@@ -65,6 +57,10 @@
                         <h5 class="card-title mb-0">Thiết lập xuất bản</h5>
                     </div>
                     <div class="card-body">
+                        <div class="mb-3">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug', $blog->slug) }}">
+                        </div>
                         <!-- Ảnh đại diện -->
                         <div class="mb-3">
                             <label class="form-label">Ảnh đại diện</label>
@@ -150,12 +146,58 @@
     @include('admin.media.picker-modal')
 @endsection
 
+@push('styles')
+<!-- quill css -->
+<link href="{{ asset('ui_velzon_admin/assets/libs/quill/quill.snow.css') }}" rel="stylesheet" type="text/css" />
+<style>
+    .quill-editor { min-height: 300px; }
+</style>
+@endpush
+
 @push('scripts')
+<!-- quill js -->
+<script src="{{ asset('ui_velzon_admin/assets/libs/quill/quill.min.js') }}"></script>
+
 <script>
     function removeImage() {
         document.getElementById('image').value = '';
         document.getElementById('imagePreview').classList.add('d-none');
         document.getElementById('imgPreviewDisplay').src = '';
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var quillTextareas = document.querySelectorAll(".quill-editor-textarea");
+        if (quillTextareas) {
+            Array.from(quillTextareas).forEach(function (textarea) {
+                // Tạo thẻ div cho editor ngay sau textarea
+                var editorContainer = document.createElement('div');
+                editorContainer.className = 'quill-editor';
+                editorContainer.innerHTML = textarea.value;
+                textarea.parentNode.insertBefore(editorContainer, textarea.nextSibling);
+                
+                // Khởi tạo Quill
+                var quill = new Quill(editorContainer, {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'align': [] }],
+                            ['link', 'image', 'video'],
+                            ['clean']
+                        ]
+                    }
+                });
+                
+                // Đồng bộ dữ liệu ngược lại textarea khi có thay đổi
+                quill.on('text-change', function() {
+                    textarea.value = quill.root.innerHTML;
+                });
+            });
+        }
+    });
 </script>
 @endpush

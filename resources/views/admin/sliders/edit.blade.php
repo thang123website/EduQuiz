@@ -139,7 +139,7 @@
                                             <li class="list-inline-item">
                                                 <a href="javascript:void(0);" class="text-primary d-inline-block btn-edit-item"
                                                     data-id="{{ $item->id }}"
-                                                    data-item="{{ json_encode($item) }}">
+                                                    data-item="{{ json_encode(array_merge($item->toArray(), ['title_translations' => $item->getTranslations('title'), 'description_translations' => $item->getTranslations('description')])) }}">
                                                     <i class="ri-edit-2-line fs-16"></i>
                                                 </a>
                                             </li>
@@ -201,12 +201,37 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-5">
-                            <label for="item-title" class="form-label fw-semibold">Tiêu đề Slide</label>
-                            <input type="text" class="form-control" id="item-title" placeholder="Nhập tiêu đề hiển thị...">
+                        @php
+                            $languages = get_active_languages();
+                        @endphp
+                        
+                        <div class="col-lg-12">
+                            <ul class="nav nav-tabs nav-justified mb-3" role="tablist">
+                                @foreach($languages as $index => $lang)
+                                <li class="nav-item">
+                                    <a class="nav-link {{ $index == 0 ? 'active' : '' }}" data-bs-toggle="tab" href="#slider-lang-{{ $lang['code'] }}" role="tab">
+                                        {{ $lang['name'] }}
+                                    </a>
+                                </li>
+                                @endforeach
+                            </ul>
+                            <div class="tab-content text-muted border p-3 rounded">
+                                @foreach($languages as $index => $lang)
+                                <div class="tab-pane {{ $index == 0 ? 'active' : '' }}" id="slider-lang-{{ $lang['code'] }}" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold">Tiêu đề Slide ({{ $lang['code'] }})</label>
+                                        <input type="text" class="form-control item-title-lang" data-lang="{{ $lang['code'] }}" placeholder="Nhập tiêu đề hiển thị...">
+                                    </div>
+                                    <div class="mb-0">
+                                        <label class="form-label fw-semibold">Mô tả ngắn ({{ $lang['code'] }})</label>
+                                        <textarea class="form-control item-description-lang" data-lang="{{ $lang['code'] }}" rows="2" placeholder="Nội dung phụ trên slide..."></textarea>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
 
-                        <div class="col-lg-3">
+                        <div class="col-lg-6">
                             <label class="form-label fw-semibold">Nổi bật</label>
                             <div class="form-check form-switch form-switch-md">
                                 <input type="checkbox" class="form-check-input" id="item-highlight">
@@ -214,7 +239,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <label for="item-status" class="form-label fw-semibold">Trạng thái</label>
                             <select class="form-select" id="item-status">
                                 <option value="active">Hiển thị</option>
@@ -225,11 +250,6 @@
                         <div class="col-lg-12">
                             <label for="item-link" class="form-label fw-semibold">Đường dẫn (Link)</label>
                             <input type="url" class="form-control" id="item-link" placeholder="https://...">
-                        </div>
-
-                        <div class="col-lg-12">
-                            <label for="item-description" class="form-label fw-semibold">Mô tả ngắn</label>
-                            <textarea class="form-control" id="item-description" rows="2" placeholder="Nội dung phụ trên slide..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -364,11 +384,12 @@
         
         // Reset form
         document.getElementById('item-image').value = '';
-        document.getElementById('item-title').value = '';
         document.getElementById('item-link').value = '';
-        document.getElementById('item-description').value = '';
         document.getElementById('item-status').value = 'active';
         document.getElementById('item-highlight').checked = false;
+
+        document.querySelectorAll('.item-title-lang').forEach(el => el.value = '');
+        document.querySelectorAll('.item-description-lang').forEach(el => el.value = '');
 
         document.getElementById('img-preview').src = '';
         document.getElementById('img-preview').classList.add('d-none');
@@ -376,9 +397,16 @@
         document.getElementById('item-form-alert').classList.add('d-none');
 
         if (itemData) {
-            document.getElementById('item-title').value = itemData.title ?? '';
+            document.querySelectorAll('.item-title-lang').forEach(el => {
+                const lang = el.dataset.lang;
+                el.value = itemData.title_translations?.[lang] || '';
+            });
+            document.querySelectorAll('.item-description-lang').forEach(el => {
+                const lang = el.dataset.lang;
+                el.value = itemData.description_translations?.[lang] || '';
+            });
+
             document.getElementById('item-link').value = itemData.link ?? '';
-            document.getElementById('item-description').value = itemData.description ?? '';
             document.getElementById('item-status').value = itemData.status ?? 'active';
             document.getElementById('item-highlight').checked = itemData.is_highlight ? true : false;
             document.getElementById('item-image').value = itemData.image ?? '';
@@ -399,11 +427,17 @@
             return;
         }
 
+        const titles = {};
+        document.querySelectorAll('.item-title-lang').forEach(el => titles[el.dataset.lang] = el.value);
+        
+        const descriptions = {};
+        document.querySelectorAll('.item-description-lang').forEach(el => descriptions[el.dataset.lang] = el.value);
+
         const payload = {
-            title: document.getElementById('item-title').value,
+            title: titles,
             image: image,
             link: document.getElementById('item-link').value,
-            description: document.getElementById('item-description').value,
+            description: descriptions,
             status: document.getElementById('item-status').value,
             is_highlight: document.getElementById('item-highlight').checked ? 1 : 0,
         };

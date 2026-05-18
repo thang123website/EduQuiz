@@ -3,10 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class Blog extends Model
 {
+    use HasTranslations;
+
     protected $table = 'blog';
+
+    public $translatable = ['title', 'description', 'content'];
 
     protected $fillable = [
         'category_id',

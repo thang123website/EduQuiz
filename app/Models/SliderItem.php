@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Translatable\HasTranslations;
 
 class SliderItem extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'slider_id',
         'title',
@@ -23,6 +26,8 @@ class SliderItem extends Model
     ];
 
     protected $appends = ['image_url'];
+
+    public $translatable = ['title', 'description'];
 
     /**
      * URL ảnh đầy đủ để hiển thị

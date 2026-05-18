@@ -117,14 +117,17 @@ class SliderController extends Controller
     public function storeItem(Request $request, Slider $slider)
     {
         Gate::authorize('slider.update');
-        $validated = $request->validate([
-            'title'       => 'nullable|string|max:255',
-            'image'       => 'required|string',
-            'link'        => 'nullable|url|max:500',
-            'description' => 'nullable|string|max:500',
-            'status'      => 'required|in:active,inactive',
-            'is_highlight'=> 'boolean',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'nullable|string|max:255'),
+            translatable_rules('description', 'nullable|string|max:500'),
+            [
+                'image'       => 'required|string',
+                'link'        => 'nullable|url|max:500',
+                'status'      => 'required|in:active,inactive',
+                'is_highlight'=> 'boolean',
+            ]
+        );
+        $validated = $request->validate($rules);
 
         $item = $this->sliderService->saveItem($slider, $validated);
 
@@ -145,14 +148,17 @@ class SliderController extends Controller
         // Kiểm tra item thuộc về slider này
         abort_if($item->slider_id !== $slider->id, 403);
 
-        $validated = $request->validate([
-            'title'       => 'nullable|string|max:255',
-            'image'       => 'required|string',
-            'link'        => 'nullable|url|max:500',
-            'description' => 'nullable|string|max:500',
-            'status'      => 'required|in:active,inactive',
-            'is_highlight'=> 'boolean',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'nullable|string|max:255'),
+            translatable_rules('description', 'nullable|string|max:500'),
+            [
+                'image'       => 'required|string',
+                'link'        => 'nullable|url|max:500',
+                'status'      => 'required|in:active,inactive',
+                'is_highlight'=> 'boolean',
+            ]
+        );
+        $validated = $request->validate($rules);
 
         $item = $this->sliderService->saveItem($slider, $validated, $item);
 

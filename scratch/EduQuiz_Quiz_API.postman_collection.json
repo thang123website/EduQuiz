@@ -1,0 +1,304 @@
+{
+	"info": {
+		"_postman_id": "d8e3b7b2-f123-4456-9876-b3c1b2f4c7e9",
+		"name": "EduQuiz Quiz API v1",
+		"description": "Collection for testing Quiz Discovery, Execution and Dashboard API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Discovery (Public)",
+			"item": [
+				{
+					"name": "Get Quiz Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quiz-categories",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quiz-categories" ]
+						}
+					}
+				},
+				{
+					"name": "Get Quiz List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes?limit=10&type=practice&difficulty=medium",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes" ],
+							"query": [
+								{ "key": "limit", "value": "10" },
+								{ "key": "type", "value": "practice" },
+								{ "key": "difficulty", "value": "medium" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Latest Quizzes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes/latest?limit=5",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes", "latest" ],
+							"query": [
+								{ "key": "limit", "value": "5" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Popular Quizzes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes/popular?limit=5",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes", "popular" ],
+							"query": [
+								{ "key": "limit", "value": "5" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Quiz Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes/{{quiz_id}}",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes", "{{quiz_id}}" ]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Execution (Auth Required)",
+			"item": [
+				{
+					"name": "Start / Resume Quiz",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" },
+							{ "key": "Content-Type", "value": "application/json", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"force_new\": false,\n  \"part_ids\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes/{{quiz_id}}/start",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes", "{{quiz_id}}", "start" ]
+						}
+					}
+				},
+				{
+					"name": "Autosave Answers (Redis)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "PUT",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Content-Type", "value": "application/json", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"responses\": [\n    {\n      \"question_id\": \"sample-question-uuid\",\n      \"option_id\": \"sample-option-uuid\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/attempts/{{attempt_id}}/autosave",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "attempts", "{{attempt_id}}", "autosave" ]
+						}
+					}
+				},
+				{
+					"name": "Submit Quiz",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Content-Type", "value": "application/json", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"responses\": [],\n  \"time_spent\": 1500\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/attempts/{{attempt_id}}/submit",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "attempts", "{{attempt_id}}", "submit" ]
+						}
+					}
+				},
+				{
+					"name": "Get Result Detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/attempts/{{attempt_id}}/result",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "attempts", "{{attempt_id}}", "result" ]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. User Dashboard (Auth Required)",
+			"item": [
+				{
+					"name": "Get Specific Quiz Attempts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/quizzes/{{quiz_id}}/attempts",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "quizzes", "{{quiz_id}}", "attempts" ]
+						}
+					}
+				},
+				{
+					"name": "Get All Attempts History",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Accept-Language", "value": "vi", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me/attempts",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "users", "me", "attempts" ]
+						}
+					}
+				},
+				{
+					"name": "Get Overall Statistics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "GET",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me/statistics",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "users", "me", "statistics" ]
+						}
+					}
+				},
+				{
+					"name": "Update User Targets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [ { "key": "token", "value": "{{auth_token}}", "type": "string" } ]
+						},
+						"method": "POST",
+						"header": [
+							{ "key": "X-API-Key", "value": "{{api_key}}", "type": "text" },
+							{ "key": "Content-Type", "value": "application/json", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"target_type\": \"TOEIC\",\n  \"target_score\": 850,\n  \"exam_date\": \"2026-12-31\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/me/targets",
+							"host": [ "{{base_url}}" ],
+							"path": [ "api", "v1", "users", "me", "targets" ]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "api_key",
+			"value": "your-api-key-here",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "your-bearer-token-here",
+			"type": "string"
+		},
+		{
+			"key": "quiz_id",
+			"value": "uuid-of-quiz",
+			"type": "string"
+		},
+		{
+			"key": "attempt_id",
+			"value": "uuid-of-attempt",
+			"type": "string"
+		}
+	]
+}

@@ -27,27 +27,27 @@
             <div id="two-column-menu">
             </div>
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                <li class="menu-title"><span>{{ __('menu') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                        <i class="ri-dashboard-2-line"></i> <span data-key="t-dashboards">Dashboards</span>
+                        <i class="ri-dashboard-2-line"></i> <span>{{ __('dashboard') }}</span>
                     </a>
                 </li> <!-- end Dashboard Menu -->
 
                 @can('media.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}" href="{{ route('admin.media.index') }}">
-                        <i class="ri-image-2-line"></i> <span>Thư viện Media</span>
+                        <i class="ri-image-2-line"></i> <span>{{ __('media_library') }}</span>
                     </a>
                 </li>
                 @endcan
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Quản lý người dùng</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('user_management') }}</span></li>
                 
                 @can('users.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                        <i class="ri-user-line"></i> <span data-key="t-users">Người dùng</span>
+                        <i class="ri-user-line"></i> <span>{{ __('users') }}</span>
                     </a>
                 </li>
                 @endcan
@@ -55,18 +55,18 @@
                 @can('roles.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">
-                        <i class="ri-shield-keyhole-line"></i> <span data-key="t-roles">Phân quyền</span>
+                        <i class="ri-shield-keyhole-line"></i> <span>{{ __('roles') }}</span>
                     </a>
                 </li>
                 @endcan
 
                 @canany(['blog.view', 'blog_category.view'])
-                <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Blog</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('blog_management') }}</span></li>
 
                 @can('blog_category.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.blog-categories.*') ? 'active' : '' }}" href="{{ route('admin.blog-categories.index') }}">
-                        <i class="ri-folder-2-line"></i> <span>Danh mục</span>
+                        <i class="ri-folder-2-line"></i> <span>{{ __('categories') }}</span>
                     </a>
                 </li>
                 @endcan
@@ -74,25 +74,25 @@
                 @can('blog.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.blog.*') ? 'active' : '' }}" href="{{ route('admin.blog.index') }}">
-                        <i class="ri-article-line"></i> <span>Bài viết</span>
+                        <i class="ri-article-line"></i> <span>{{ __('blog') }}</span>
                     </a>
                 </li>
                 @endcan
 
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">
-                        <i class="ri-chat-1-line"></i> <span>Bình luận</span>
+                        <i class="ri-chat-1-line"></i> <span>{{ __('comments') }}</span>
                     </a>
                 </li>
                 @endcanany
                 
                 @canany(['quiz_category.view', 'exams.view', 'quiz_attempt.view'])
-                <li class="menu-title"><i class="ri-more-fill"></i> <span>Quản lý Đề thi</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('quiz_management') }}</span></li>
                 
                 @can('quiz_category.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-categories.*') ? 'active' : '' }}" href="{{ route('admin.quiz-categories.index') }}">
-                        <i class="ri-folder-shared-line"></i> <span>Danh mục Quiz</span>
+                        <i class="ri-folder-shared-line"></i> <span>{{ __('quiz_categories') }}</span>
                     </a>
                 </li>
                 @endcan
@@ -100,7 +100,7 @@
                 @can('quiz_category.view') <!-- Using quiz_category permission for tags as well for now -->
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}">
-                        <i class="ri-price-tag-3-line"></i> <span>Quản lý Thẻ (Tags)</span>
+                        <i class="ri-price-tag-3-line"></i> <span>{{ __('tags') }}</span>
                     </a>
                 </li>
                 @endcan
@@ -108,7 +108,7 @@
                 @can('exams.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quizzes.*') ? 'active' : '' }}" href="{{ route('admin.quizzes.index') }}">
-                        <i class="ri-questionnaire-line"></i> <span>Danh sách Quiz</span>
+                        <i class="ri-questionnaire-line"></i> <span>{{ __('quizzes') }}</span>
                     </a>
                 </li>
                 @endcan
@@ -116,47 +116,47 @@
                 @can('quiz_attempt.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.quiz-attempts.*') ? 'active' : '' }}" href="{{ route('admin.quiz-attempts.index') }}">
-                        <i class="ri-history-line"></i> <span>Lịch sử thi</span>
+                        <i class="ri-history-line"></i> <span>{{ __('quiz_history') }}</span>
                     </a>
                 </li>
                 @endcan
                 @endcanany
 
                 @can('slider.view')
-                <li class="menu-title"><i class="ri-more-fill"></i> <span>Nội dung Website</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('website_content') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.sliders.*') ? 'active' : '' }}" href="{{ route('admin.sliders.index') }}">
-                        <i class="ri-slideshow-line"></i> <span>Slider / Banner</span>
+                        <i class="ri-slideshow-line"></i> <span>{{ __('slider_banner') }}</span>
                     </a>
                 </li>
                 @endcan
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span>Dịch vụ & Khách hàng</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('services_customers') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ request()->routeIs('admin.forms.*') ? 'active' : '' }}" href="{{ route('admin.forms.index') }}">
-                        <i class="ri-survey-line"></i> <span>Yêu cầu / Form</span>
+                        <i class="ri-survey-line"></i> <span>{{ __('requests_forms') }}</span>
                     </a>
                 </li>
 
-                <li class="menu-title"><i class="ri-more-fill"></i> <span>Thông báo</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('notifications') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarNotifications" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.notifications.*') ? 'true' : 'false' }}" aria-controls="sidebarNotifications">
-                        <i class="ri-notification-3-line"></i> <span>Thông báo</span>
+                        <i class="ri-notification-3-line"></i> <span>{{ __('notifications') }}</span>
                     </a>
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.notifications.*') || request()->routeIs('notifications.*') ? 'show' : '' }}" id="sidebarNotifications">
                         <ul class="nav nav-sm flex-column">
                             @can('notifications.history')
                             <li class="nav-item">
-                                <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}"> Lịch sử gửi </a>
+                                <a href="{{ route('admin.notifications.index') }}" class="nav-link {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}"> {{ __('send_history') }} </a>
                             </li>
                             @endcan
                             @can('notifications.create')
                             <li class="nav-item">
-                                <a href="{{ route('admin.notifications.create') }}" class="nav-link {{ request()->routeIs('admin.notifications.create') ? 'active' : '' }}"> Gửi thông báo </a>
+                                <a href="{{ route('admin.notifications.create') }}" class="nav-link {{ request()->routeIs('admin.notifications.create') ? 'active' : '' }}"> {{ __('send_notification') }} </a>
                             </li>
                             @endcan
                             <li class="nav-item">
-                                <a href="{{ route('notifications.userList') }}" class="nav-link {{ request()->routeIs('notifications.userList') ? 'active' : '' }}"> Thông báo của tôi </a>
+                                <a href="{{ route('notifications.userList') }}" class="nav-link {{ request()->routeIs('notifications.userList') ? 'active' : '' }}"> {{ __('my_notifications') }} </a>
                             </li>
                         </ul>
                     </div>
@@ -164,24 +164,27 @@
 
 
                 @can('setting.manage')
-                <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">Cài đặt chung</span></li>
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('general_settings') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
-                        <i class="ri-settings-3-line"></i> <span>Hệ thống</span>
+                        <i class="ri-settings-3-line"></i> <span>{{ __('system') }}</span>
                     </a>
                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.settings.*') ? 'show' : '' }}" id="sidebarSettings">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.general') }}" class="nav-link {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}"> Cấu hình Website </a>
+                                <a href="{{ route('admin.settings.general') }}" class="nav-link {{ request()->routeIs('admin.settings.general') ? 'active' : '' }}"> {{ __('website_config') }} </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}"> Cấu hình Media </a>
+                                <a href="{{ route('admin.languages.index') }}" class="nav-link {{ request()->routeIs('admin.languages.*') ? 'active' : '' }}"> {{ __('language_config') }} </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.mail') }}" class="nav-link {{ request()->routeIs('admin.settings.mail') ? 'active' : '' }}"> Cấu hình Email </a>
+                                <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}"> {{ __('media_config') }} </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.settings.api') }}" class="nav-link {{ request()->routeIs('admin.settings.api') ? 'active' : '' }}"> Cấu hình API </a>
+                                <a href="{{ route('admin.settings.mail') }}" class="nav-link {{ request()->routeIs('admin.settings.mail') ? 'active' : '' }}"> {{ __('email_config') }} </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.settings.api') }}" class="nav-link {{ request()->routeIs('admin.settings.api') ? 'active' : '' }}"> {{ __('api_config') }} </a>
                             </li>
                         </ul>
                     </div>

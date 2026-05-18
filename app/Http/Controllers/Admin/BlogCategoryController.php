@@ -26,11 +26,14 @@ class BlogCategoryController extends Controller
     public function store(Request $request)
     {
         Gate::authorize('blog_category.create');
-        $request->validate([
-            'title'     => 'required|string|max:255',
-            'slug'      => 'nullable|string|max:255|unique:blog_categories,slug',
-            'parent_id' => 'nullable|exists:blog_categories,id',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'required|string|max:255'),
+            [
+                'slug'      => 'nullable|string|max:255|unique:blog_categories,slug',
+                'parent_id' => 'nullable|exists:blog_categories,id',
+            ]
+        );
+        $request->validate($rules);
 
         BlogCategory::create([
             'title'     => $request->title,
@@ -54,11 +57,14 @@ class BlogCategoryController extends Controller
     public function update(Request $request, BlogCategory $blogCategory)
     {
         Gate::authorize('blog_category.update');
-        $request->validate([
-            'title'     => 'required|string|max:255',
-            'slug'      => 'nullable|string|max:255|unique:blog_categories,slug,' . $blogCategory->id,
-            'parent_id' => 'nullable|exists:blog_categories,id|different:id',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'required|string|max:255'),
+            [
+                'slug'      => 'nullable|string|max:255|unique:blog_categories,slug,' . $blogCategory->id,
+                'parent_id' => 'nullable|exists:blog_categories,id|different:id',
+            ]
+        );
+        $request->validate($rules);
 
         $blogCategory->update([
             'title'     => $request->title,

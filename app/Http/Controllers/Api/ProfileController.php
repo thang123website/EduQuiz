@@ -107,4 +107,25 @@ class ProfileController extends Controller
             'data' => new UserResource($user->fresh())
         ]);
     }
+
+    /**
+     * Change user password.
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'current_password' => 'required|current_password',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = $request->user();
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['new_password'])
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mật khẩu đã được cập nhật thành công.'
+        ]);
+    }
 }

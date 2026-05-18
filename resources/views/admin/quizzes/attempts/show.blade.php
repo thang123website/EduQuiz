@@ -44,7 +44,7 @@
                         @endphp
                         {{ $min > 0 ? $min . ' phút ' : '' }}{{ $sec }} giây
                     </p>
-                    <p class="mb-2"><span class="fw-bold">Ngày thực hiện:</span> {{ $attempt->created_at->format('H:i d/m/Y') }}</p>
+                    <p class="mb-2"><span class="fw-bold">Ngày thực hiện:</span> {{ display_datetime($attempt->created_at, 'H:i d/m/Y') }}</p>
                     <p class="mb-0"><span class="fw-bold">Trạng thái:</span> 
                         @if($attempt->status == 'passed')
                             <span class="badge bg-success">PASSED</span>

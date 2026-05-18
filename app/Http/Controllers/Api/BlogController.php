@@ -24,7 +24,8 @@ class BlogController extends Controller
         $sortBy = $request->input('sort_by', 'latest'); // latest, oldest, popular
 
         $query = Blog::with(['category', 'author'])
-            ->where('status', 'publish');
+            ->where('status', 'publish')
+            ->whereNotNull('title->' . app()->getLocale());
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -78,7 +79,8 @@ class BlogController extends Controller
     public function popular(Request $request)
     {
         $limit = $request->input('limit', 5);
-        $cacheKey = "api_blogs_popular_{$limit}";
+        $locale = app()->getLocale();
+        $cacheKey = "api_blogs_popular_{$limit}_{$locale}";
 
         $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
         $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
@@ -86,6 +88,7 @@ class BlogController extends Controller
         $fetchData = function () use ($limit) {
             $blogs = Blog::with(['category', 'author'])
                 ->where('status', 'publish')
+                ->whereNotNull('title->' . app()->getLocale())
                 ->orderBy('visit_count', 'desc')
                 ->limit($limit)
                 ->get();
@@ -111,7 +114,8 @@ class BlogController extends Controller
     public function latest(Request $request)
     {
         $limit = $request->input('limit', 5);
-        $cacheKey = "api_blogs_latest_{$limit}";
+        $locale = app()->getLocale();
+        $cacheKey = "api_blogs_latest_{$limit}_{$locale}";
 
         $cacheEnabled = Setting::get('api_cache_enabled', 0) == '1';
         $cacheDuration = (int) Setting::get('api_cache_duration', 3600);
@@ -119,6 +123,7 @@ class BlogController extends Controller
         $fetchData = function () use ($limit) {
             $blogs = Blog::with(['category', 'author'])
                 ->where('status', 'publish')
+                ->whereNotNull('title->' . app()->getLocale())
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->get();
@@ -146,6 +151,7 @@ class BlogController extends Controller
         $blog = Blog::with(['category', 'author'])
             ->where('slug', $slug)
             ->where('status', 'publish')
+            ->whereNotNull('title->' . app()->getLocale())
             ->firstOrFail();
 
         // Tăng lượng truy cập (Không làm chậm request vì cập nhật trực tiếp query builder)
@@ -170,6 +176,7 @@ class BlogController extends Controller
             ->where('category_id', $blog->category_id)
             ->where('id', '!=', $blog->id)
             ->where('status', 'publish')
+            ->whereNotNull('title->' . app()->getLocale())
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();

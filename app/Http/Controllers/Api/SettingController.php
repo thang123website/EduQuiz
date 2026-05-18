@@ -27,6 +27,27 @@ class SettingController extends Controller
                     $rawSettings[$key] = get_image_url($rawSettings[$key]);
                 }
             }
+            // Chuẩn hóa JSON cho system_language và trích xuất cấu hình ngôn ngữ cho Next.js
+            if (isset($rawSettings['system_language']) && is_string($rawSettings['system_language'])) {
+                $languages = json_decode($rawSettings['system_language'], true) ?? [];
+                $rawSettings['system_language'] = $languages; // Parse string thành Array
+
+                $defaultLang = 'vi'; // Fallback
+                $supportedLocales = [];
+
+                foreach ($languages as $lang) {
+                    if (isset($lang['status']) && $lang['status'] == 1) { // Chỉ lấy ngôn ngữ đang hoạt động
+                        $supportedLocales[] = $lang['code'];
+                        if (isset($lang['default']) && $lang['default'] == true) {
+                            $defaultLang = $lang['code'];
+                        }
+                    }
+                }
+
+                // Tạo sẵn 2 biến tiện lợi để Next.js gọi vào middleware dễ dàng
+                $rawSettings['site_default_language'] = $defaultLang;
+                $rawSettings['site_supported_languages'] = !empty($supportedLocales) ? implode(',', $supportedLocales) : 'vi';
+            }
             
             return $rawSettings;
         });

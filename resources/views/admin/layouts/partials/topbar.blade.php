@@ -90,19 +90,23 @@
 
                 <div class="dropdown ms-1 topbar-head-dropdown header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle shadow-none" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img id="header-lang-img" src="{{ asset('assets/admin/images/flags/us.svg') }}" alt="Header Language" height="20" class="rounded">
+                        <img id="custom-header-lang-img" src="{{ asset('assets/admin/images/flags/' . (app()->getLocale() == 'vi' ? 'vn.svg' : 'us.svg')) }}" alt="Header Language" height="20" class="rounded">
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language py-2" data-lang="en" title="English">
+                        <a href="{{ route('set-locale', 'en') }}" class="dropdown-item notify-item py-2" title="English">
                             <img src="{{ asset('assets/admin/images/flags/us.svg') }}" alt="user-image" class="me-2 rounded" height="18">
                             <span class="align-middle">English</span>
                         </a>
-                        <a href="javascript:void(0);" class="dropdown-item notify-item language py-2" data-lang="vi" title="Vietnamese">
+                        <a href="{{ route('set-locale', 'vi') }}" class="dropdown-item notify-item py-2" title="Vietnamese">
                             <img src="{{ asset('assets/admin/images/flags/vn.svg') }}" alt="user-image" class="me-2 rounded" height="18">
                             <span class="align-middle">Tiếng Việt</span>
                         </a>
                     </div>
                 </div>
+                <script>
+                    // Đồng bộ với localStorage của giao diện Velzon để tránh lỗi ajax gọi file JSON ngôn ngữ cũ
+                    localStorage.setItem('language', '{{ app()->getLocale() }}');
+                </script>
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item">
                     <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle shadow-none" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -361,7 +365,7 @@ function bulkDeleteNotifications() {
                         <a class="dropdown-item" href="#"><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$5971.67</b></span></a>
                         <a class="dropdown-item" href="#"><span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Settings</span></a>
                         <a class="dropdown-item" href="#"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Logout</span></a>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle">{{ __('logout') }}</span></a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>

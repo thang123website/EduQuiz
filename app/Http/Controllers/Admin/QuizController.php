@@ -70,6 +70,9 @@ class QuizController extends Controller
             'settings' => 'nullable|array',
         ]);
 
+        $validated['is_popular'] = $request->has('is_popular');
+        $validated['is_new'] = $request->has('is_new');
+
         $quiz = Quiz::create($validated);
         
         if ($request->has('tags')) {
@@ -126,6 +129,9 @@ class QuizController extends Controller
             'status' => 'required|in:draft,published,archived',
             'settings' => 'nullable|array',
         ]);
+
+        $validated['is_popular'] = $request->has('is_popular');
+        $validated['is_new'] = $request->has('is_new');
 
         $quiz->update($validated);
 

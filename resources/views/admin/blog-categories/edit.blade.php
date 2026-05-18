@@ -51,10 +51,12 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $blogCategory->title) }}" required>
-                        </div>
+                        <x-admin.lang-tabs 
+                            :model="$blogCategory" 
+                            :fields="[
+                                'title' => ['type' => 'text', 'label' => 'Tên danh mục', 'placeholder' => 'VD: Tin tức, Hướng dẫn...', 'required' => true]
+                            ]" 
+                        />
                         <div class="mb-3">
                             <label for="slug" class="form-label">Slug</label>
                             <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug', $blogCategory->slug) }}">

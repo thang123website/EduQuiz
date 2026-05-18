@@ -59,16 +59,19 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         Gate::authorize('blog.create');
-        $request->validate([
-            'title'          => 'required|string|max:255',
-            'slug'           => 'nullable|string|max:255|unique:blog,slug',
-            'category_id'    => 'nullable|exists:blog_categories,id',
-            'description'    => 'nullable|string',
-            'content'        => 'required|string',
-            'image'          => 'nullable|string', // Chuyển thành string để nhận URL từ Media Manager
-            'enable_comment' => 'nullable|boolean',
-            'status'         => 'required|in:pending,publish',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'required|string|max:255'),
+            translatable_rules('description', 'nullable|string'),
+            translatable_rules('content', 'required|string'),
+            [
+                'slug'           => 'nullable|string|max:255|unique:blog,slug',
+                'category_id'    => 'nullable|exists:blog_categories,id',
+                'image'          => 'nullable|string',
+                'enable_comment' => 'nullable|boolean',
+                'status'         => 'required|in:pending,publish',
+            ]
+        );
+        $request->validate($rules);
 
         Blog::create([
             'title'          => $request->title,
@@ -96,16 +99,19 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
         Gate::authorize('blog.update');
-        $request->validate([
-            'title'          => 'required|string|max:255',
-            'slug'           => 'nullable|string|max:255|unique:blog,slug,' . $blog->id,
-            'category_id'    => 'nullable|exists:blog_categories,id',
-            'description'    => 'nullable|string',
-            'content'        => 'required|string',
-            'image'          => 'nullable|string', // Chuyển thành string
-            'enable_comment' => 'nullable|boolean',
-            'status'         => 'required|in:pending,publish',
-        ]);
+        $rules = array_merge(
+            translatable_rules('title', 'required|string|max:255'),
+            translatable_rules('description', 'nullable|string'),
+            translatable_rules('content', 'required|string'),
+            [
+                'slug'           => 'nullable|string|max:255|unique:blog,slug,' . $blog->id,
+                'category_id'    => 'nullable|exists:blog_categories,id',
+                'image'          => 'nullable|string',
+                'enable_comment' => 'nullable|boolean',
+                'status'         => 'required|in:pending,publish',
+            ]
+        );
+        $request->validate($rules);
 
         $blog->update([
             'title'          => $request->title,

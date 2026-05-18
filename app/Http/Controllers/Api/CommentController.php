@@ -18,7 +18,10 @@ class CommentController extends Controller
     {
         $limit = $request->input('limit', 10);
         
-        $blog = Blog::where('slug', $slug)->where('status', 'publish')->firstOrFail();
+        $blog = Blog::where('slug', $slug)
+            ->where('status', 'publish')
+            ->whereNotNull('title->' . app()->getLocale())
+            ->firstOrFail();
 
         // Chỉ lấy bình luận đã duyệt và là bình luận gốc (parent_id = null)
         // Load kèm theo user của bình luận gốc và các phản hồi (kèm user của phản hồi)
@@ -37,7 +40,10 @@ class CommentController extends Controller
      */
     public function store($slug, Request $request)
     {
-        $blog = Blog::where('slug', $slug)->where('status', 'publish')->firstOrFail();
+        $blog = Blog::where('slug', $slug)
+            ->where('status', 'publish')
+            ->whereNotNull('title->' . app()->getLocale())
+            ->firstOrFail();
 
         if (!$blog->enable_comment) {
             return response()->json([

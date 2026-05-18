@@ -120,6 +120,18 @@
                                             </div>
 
                                             <div class="mb-3">
+                                                <label class="form-label fw-semibold text-dark">Nổi bật & Mới</label>
+                                                <div class="form-check form-switch mb-2">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="is_popular" name="is_popular" value="1" {{ $quiz->is_popular ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="is_popular">Đánh dấu Nổi bật (Popular)</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="is_new" name="is_new" value="1" {{ $quiz->is_new ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="is_new">Đánh dấu Mới (New)</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
                                                 <label class="form-label fw-semibold text-dark">Ảnh đại diện</label>
                                                 <div class="d-flex flex-column gap-2">
                                                     <div class="input-group input-group-sm">
