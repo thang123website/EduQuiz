@@ -150,6 +150,10 @@ class QuizAttemptController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Submitted empty quiz.', 'attempt_id' => $attemptId]);
         }
 
+        // Fetch all valid questions to prevent foreign key constraint violations from dummy/invalid data
+        $questionIds = array_keys($savedResponses);
+        $validQuestionIds = \App\Models\Question::whereIn('id', $questionIds)->pluck('id')->toArray();
+
         // Fetch all selected options from DB to check correctness
         $optionIds = array_values($savedResponses);
         $options = Option::whereIn('id', $optionIds)->get()->keyBy('id');
@@ -160,6 +164,11 @@ class QuizAttemptController extends Controller
         $now = now();
 
         foreach ($savedResponses as $questionId => $optionId) {
+            // Skip invalid questions (e.g. mock data from frontend)
+            if (!in_array($questionId, $validQuestionIds)) {
+                continue;
+            }
+
             $isCorrect = false;
             if ($options->has($optionId)) {
                 $isCorrect = $options->get($optionId)->is_correct;
