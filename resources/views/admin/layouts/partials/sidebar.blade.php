@@ -164,6 +164,18 @@
 
 
                 @can('setting.manage')
+                <li class="menu-title"><i class="ri-more-fill"></i> <span>Chatbot AI</span></li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.chatbot-config.*') ? 'active' : '' }}" href="{{ route('admin.chatbot-config.index') }}">
+                        <i class="ri-robot-line"></i> <span>Cấu hình Chatbot AI</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.chatbot-history.*') ? 'active' : '' }}" href="{{ route('admin.chatbot-history.index') }}">
+                        <i class="ri-history-line"></i> <span>Lịch sử Chatbot</span>
+                    </a>
+                </li>
+
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>{{ __('general_settings') }}</span></li>
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">

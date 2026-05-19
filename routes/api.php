@@ -68,6 +68,9 @@ Route::middleware([\App\Http\Middleware\VerifyApiKeyMiddleware::class])->group(f
         Route::post('/attempts/{attempt_id}/submit', [\App\Http\Controllers\Api\QuizAttemptController::class, 'submit']);
         Route::get('/attempts/{attempt_id}/result', [\App\Http\Controllers\Api\QuizAttemptController::class, 'result']);
         
+        // Chatbot AI
+        Route::post('/chatbot/message', [\App\Modules\Chatbot\Controllers\ChatbotController::class, 'sendMessage'])->middleware('throttle:15,1');
+
         // Quiz History & Dashboard
         Route::get('/quizzes/{id}/attempts', [\App\Http\Controllers\Api\UserDashboardController::class, 'quizAttempts']);
         Route::get('/users/me/attempts', [\App\Http\Controllers\Api\UserDashboardController::class, 'allAttempts']);

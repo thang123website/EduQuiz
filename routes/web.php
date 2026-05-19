@@ -34,6 +34,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     Route::resource('blog-categories', \App\Http\Controllers\Admin\BlogCategoryController::class);
     Route::resource('blog', \App\Http\Controllers\Admin\BlogController::class);
 
+    // Chatbot AI
+    Route::get('/chatbot-config', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'index'])->name('chatbot-config.index');
+    Route::put('/chatbot-config', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'update'])->name('chatbot-config.update');
+    Route::post('/chatbot-config/test', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'testChat'])->name('chatbot-config.test');
+    Route::get('/chatbot-history', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'history'])->name('chatbot-history.index');
+    Route::delete('/chatbot-history/clear', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'clearHistory'])->name('chatbot-history.clear');
+    Route::delete('/chatbot-history/bulk-delete', [\App\Http\Controllers\Admin\ChatbotConfigController::class, 'bulkDeleteHistory'])->name('chatbot-history.bulk-delete');
+
     // Cấu hình hệ thống
     Route::get('/settings/general', [\App\Http\Controllers\Admin\SettingController::class, 'general'])->name('settings.general');
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
