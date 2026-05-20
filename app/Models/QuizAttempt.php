@@ -51,4 +51,15 @@ class QuizAttempt extends Model
     {
         return $this->hasMany(UserResponse::class, 'attempt_id');
     }
+
+    /**
+     * Get names of parts for this attempt.
+     */
+    public function getPartNamesAttribute()
+    {
+        if (empty($this->part_ids)) {
+            return '';
+        }
+        return \App\Models\QuizPart::whereIn('id', $this->part_ids)->pluck('title')->implode(', ');
+    }
 }

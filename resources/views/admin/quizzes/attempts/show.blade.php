@@ -26,7 +26,7 @@
                 <p class="text-muted">{{ $attempt->user->email }}</p>
                 <div class="d-flex justify-content-around mt-4">
                     <div>
-                        <h4 class="mb-0">{{ $attempt->score }}%</h4>
+                        <h4 class="mb-0">{{ $attempt->total_count > 0 ? number_format(($attempt->correct_count / $attempt->total_count) * 100, 2) : 0 }}%</h4>
                         <p class="text-muted mb-0">Điểm số</p>
                     </div>
                     <div>
@@ -37,6 +37,9 @@
                 <hr class="my-4">
                 <div class="text-start">
                     <p class="mb-2"><span class="fw-bold">Đề thi:</span> {{ $attempt->quiz->title }}</p>
+                    @if($attempt->part_names)
+                        <p class="mb-2"><span class="fw-bold">Phần thi:</span> <span class="text-primary">{{ $attempt->part_names }}</span></p>
+                    @endif
                     <p class="mb-2"><span class="fw-bold">Thời gian:</span> 
                         @php
                             $min = floor($attempt->time_spent / 60);

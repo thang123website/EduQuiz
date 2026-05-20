@@ -108,11 +108,16 @@
                                 </td>
                                 <td>
                                     <h6 class="mb-0">{{ $attempt->quiz->title }}</h6>
+                                    @if($attempt->part_names)
+                                        <div class="text-primary small mb-1">
+                                            <i class="ri-git-repository-line align-middle"></i> {{ $attempt->part_names }}
+                                        </div>
+                                    @endif
                                     <small class="text-muted">{{ $attempt->quiz->category->name }}</small>
                                 </td>
                                 <td>
                                     <div class="text-{{ $attempt->status == 'passed' ? 'success' : ($attempt->status == 'failed' ? 'danger' : 'info') }}">
-                                        <span class="fw-bold fs-14">{{ $attempt->score }}%</span>
+                                        <span class="fw-bold fs-14">{{ $attempt->total_count > 0 ? number_format(($attempt->correct_count / $attempt->total_count) * 100, 2) : 0 }}%</span>
                                         <div class="text-muted small">({{ $attempt->correct_count }}/{{ $attempt->total_count }} câu đúng)</div>
                                     </div>
                                 </td>

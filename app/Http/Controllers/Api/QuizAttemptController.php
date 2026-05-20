@@ -7,11 +7,15 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\UserResponse;
 use App\Models\Option;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use App\Http\Resources\QuizPartExecutionResource;
 use App\Http\Resources\QuizPartResultResource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Exception;
 
 class QuizAttemptController extends Controller
 {
@@ -135,7 +139,14 @@ class QuizAttemptController extends Controller
         // Save to Cache
         foreach ($responses as $response) {
             if (isset($response['question_id']) && isset($response['option_id'])) {
-                $savedResponses[$response['question_id']] = $response['option_id'];
+                $qId = $response['question_id'];
+                $optId = $response['option_id'];
+                
+                if (is_array($optId)) {
+                    $savedResponses[$qId] = $optId;
+                } else {
+                    $savedResponses[$qId] = [$optId];
+                }
             }
         }
 
@@ -164,7 +175,9 @@ class QuizAttemptController extends Controller
         $finalResponses = $request->input('responses', []);
         foreach ($finalResponses as $resp) {
             if (isset($resp['question_id']) && isset($resp['option_id'])) {
-                $savedResponses[$resp['question_id']] = $resp['option_id'];
+                $qId = $resp['question_id'];
+                $optId = $resp['option_id'];
+                $savedResponses[$qId] = is_array($optId) ? $optId : [$optId];
             }
         }
 
@@ -175,44 +188,70 @@ class QuizAttemptController extends Controller
 
         // Fetch all valid questions to prevent foreign key constraint violations from dummy/invalid data
         $questionIds = array_keys($savedResponses);
-        $validQuestionIds = \App\Models\Question::whereIn('id', $questionIds)->pluck('id')->toArray();
+        $questions = Question::with('options')->whereIn('id', $questionIds)->get()->keyBy('id');
+        $validQuestionIds = $questions->keys()->toArray();
 
         // Fetch all selected options from DB to check correctness
-        $optionIds = array_values($savedResponses);
-        $options = Option::whereIn('id', $optionIds)->get()->keyBy('id');
+        $optionIds = [];
+        foreach ($savedResponses as $opts) {
+            $optsArr = is_array($opts) ? $opts : [$opts];
+            foreach ($optsArr as $o) {
+                $optionIds[] = $o;
+            }
+        }
+        $options = Option::whereIn('id', array_unique($optionIds))->get()->keyBy('id');
 
         $inserts = [];
         $correctCount = 0;
         $totalScore = 0;
         $now = now();
 
-        foreach ($savedResponses as $questionId => $optionId) {
+        foreach ($savedResponses as $questionId => $optIds) {
             // Skip invalid questions (e.g. mock data from frontend)
             if (!in_array($questionId, $validQuestionIds)) {
                 continue;
             }
 
+            $question = $questions->get($questionId);
+            $optIdsArr = is_array($optIds) ? $optIds : [$optIds];
+
+            // Evaluate correctness based on question type
             $isCorrect = false;
-            if ($options->has($optionId)) {
-                $isCorrect = $options->get($optionId)->is_correct;
+            if ($question->type === 'multiple_answer') {
+                $correctOptionIds = $question->options->where('is_correct', true)->pluck('id')->toArray();
+                sort($correctOptionIds);
+                $selectedOptIds = $optIdsArr;
+                sort($selectedOptIds);
+                
+                $isCorrect = ($correctOptionIds == $selectedOptIds);
+            } else {
+                if (count($optIdsArr) > 0 && $options->has($optIdsArr[0])) {
+                    $isCorrect = $options->get($optIdsArr[0])->is_correct;
+                }
             }
 
             if ($isCorrect) {
                 $correctCount++;
-                // In a real system, we might query question_quiz_part to get the specific mark for this question.
-                // For simplicity, we assume default 1.00 or fetch question mark.
-                $totalScore += 1.00; 
+                // Use question default_mark
+                $totalScore += (float) $question->default_mark; 
             }
 
-            $inserts[] = [
-                'id' => \Illuminate\Support\Str::uuid()->toString(),
-                'attempt_id' => $attemptId,
-                'question_id' => $questionId,
-                'selected_option_id' => $optionId,
-                'is_correct' => $isCorrect,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
+            foreach ($optIdsArr as $optId) {
+                $optIsCorrect = false;
+                if ($options->has($optId)) {
+                    $optIsCorrect = $options->get($optId)->is_correct;
+                }
+
+                $inserts[] = [
+                    'id' => Str::uuid()->toString(),
+                    'attempt_id' => $attemptId,
+                    'question_id' => $questionId,
+                    'selected_option_id' => $optId,
+                    'is_correct' => $optIsCorrect,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
         }
 
         // Use Transaction for bulk insert
@@ -237,18 +276,25 @@ class QuizAttemptController extends Controller
 
             DB::commit();
 
+            // Calculate answered, incorrect, skipped
+            $answeredCount = UserResponse::where('attempt_id', $attemptId)->distinct('question_id')->count('question_id');
+            $skippedCount = max(0, $attempt->total_count - $answeredCount);
+            $incorrectCount = max(0, $answeredCount - $correctCount);
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Quiz submitted successfully',
                 'data' => [
                     'attempt_id' => $attemptId,
                     'correct_count' => $correctCount,
+                    'incorrect_count' => $incorrectCount,
+                    'skipped_count' => $skippedCount,
                     'score' => $totalScore,
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
-            \Log::error("Quiz Submit Error: " . $e->getMessage());
+            Log::error("Quiz Submit Error: " . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Failed to submit quiz'], 500);
         }
     }
@@ -287,6 +333,11 @@ class QuizAttemptController extends Controller
             }
         ])->get();
 
+        // Calculate answered, incorrect, skipped
+        $answeredCount = UserResponse::where('attempt_id', $attemptId)->distinct('question_id')->count('question_id');
+        $skippedCount = max(0, $attempt->total_count - $answeredCount);
+        $incorrectCount = max(0, $answeredCount - $attempt->correct_count);
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -295,6 +346,8 @@ class QuizAttemptController extends Controller
                     'status' => $attempt->status,
                     'score' => (float) $attempt->score,
                     'correct_count' => $attempt->correct_count,
+                    'incorrect_count' => $incorrectCount,
+                    'skipped_count' => $skippedCount,
                     'total_count' => $attempt->total_count,
                     'time_spent' => $attempt->time_spent,
                 ],
