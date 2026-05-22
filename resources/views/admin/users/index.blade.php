@@ -39,6 +39,13 @@
             <div class="card">
                 <div class="card-header align-items-center d-flex">
                     <h4 class="card-title mb-0 flex-grow-1">Danh sách người dùng</h4>
+                    @can('users.delete')
+                    <div class="flex-shrink-0 me-2" id="bulk-delete-container" style="display: none;">
+                        <button class="btn btn-soft-danger" onClick="deleteMultiple()">
+                            <i class="ri-delete-bin-2-line"></i> Xóa đã chọn (<span id="selected-count">0</span>)
+                        </button>
+                    </div>
+                    @endcan
                     @can('users.create')
                     <div class="flex-shrink-0">
                         <a href="{{ route('admin.users.create') }}" class="btn btn-primary waves-effect waves-light"><i class="ri-add-line align-bottom me-1"></i> Thêm mới</a>
@@ -164,3 +171,106 @@
         </div><!-- end col -->
     </div><!-- end row -->
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkAll = document.getElementById('checkAll');
+        const checkboxes = document.querySelectorAll('input[name="chk_child"]');
+        const bulkDeleteContainer = document.getElementById('bulk-delete-container');
+        const selectedCount = document.getElementById('selected-count');
+
+        if(checkAll) {
+            checkAll.addEventListener('change', function() {
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = checkAll.checked;
+                });
+                toggleRemoveActions();
+            });
+        }
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', toggleRemoveActions);
+        });
+
+        function toggleRemoveActions() {
+            const checkedCount = document.querySelectorAll('input[name="chk_child"]:checked').length;
+            if(checkedCount > 0) {
+                if (bulkDeleteContainer) bulkDeleteContainer.style.display = 'block';
+                if (selectedCount) selectedCount.innerText = checkedCount;
+            } else {
+                if (bulkDeleteContainer) bulkDeleteContainer.style.display = 'none';
+                if (selectedCount) selectedCount.innerText = '0';
+                if(checkAll) checkAll.checked = false;
+            }
+        }
+    });
+
+    function deleteMultiple() {
+        const checkedCheckboxes = document.querySelectorAll('input[name="chk_child"]:checked');
+        if(checkedCheckboxes.length === 0) {
+            alert('Vui lòng chọn ít nhất 1 dòng.');
+            return;
+        }
+
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Bạn sẽ không thể khôi phục dữ liệu đã xóa!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-primary w-xs me-2 mt-2',
+            cancelButtonClass: 'btn btn-danger w-xs mt-2',
+            confirmButtonText: "Đúng, xóa nó!",
+            cancelButtonText: "Hủy",
+            buttonsStyling: false,
+            showCloseButton: true
+        }).then(function (result) {
+            if (result.value) {
+                const ids = Array.from(checkedCheckboxes).map(cb => cb.value);
+                
+                fetch('{{ route("admin.users.bulk-destroy") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: ids })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        Swal.fire({
+                            title: 'Đã xóa!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: data.message || 'Đã có lỗi xảy ra',
+                            icon: 'error',
+                            confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                            buttonsStyling: false
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Đã có lỗi xảy ra trong quá trình xử lý.',
+                        icon: 'error',
+                        confirmButtonClass: 'btn btn-primary w-xs mt-2',
+                        buttonsStyling: false
+                    });
+                });
+            }
+        });
+    }
+</script>
+@endpush

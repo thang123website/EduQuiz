@@ -147,4 +147,37 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'Xóa người dùng thành công');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        Gate::authorize('users.delete');
+        $ids = $request->ids;
+        
+        if (!$ids || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Dữ liệu không hợp lệ.'
+            ], 400);
+        }
+
+        if (in_array(auth()->id(), $ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể tự xóa tài khoản của chính mình trong danh sách chọn.'
+            ], 403);
+        }
+
+        try {
+            User::whereIn('id', $ids)->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa thành công ' . count($ids) . ' người dùng.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đã có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

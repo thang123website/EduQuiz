@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
+    Route::post('users/bulk-delete', [\App\Http\Controllers\Admin\UserController::class, 'bulkDestroy'])->name('users.bulk-destroy');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class);
     Route::resource('blog-categories', \App\Http\Controllers\Admin\BlogCategoryController::class);
