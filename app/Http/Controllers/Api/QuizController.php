@@ -25,7 +25,9 @@ class QuizController extends Controller
         $difficulty = $request->input('difficulty');
         $sortBy = $request->input('sort_by', 'latest'); // latest, popular
 
-        $query = Quiz::with(['category', 'tags'])
+        $query = Quiz::with(['category' => function($q) {
+            $q->withCount('quizzes');
+        }, 'tags'])
             ->where('status', 'published');
 
         // 1. Search
@@ -114,7 +116,9 @@ class QuizController extends Controller
         $cacheKey = "api_quizzes_popular_{$limit}_{$locale}";
 
         $fetchData = function () use ($limit) {
-            $quizzes = Quiz::with(['category', 'tags'])
+            $quizzes = Quiz::with(['category' => function($q) {
+                $q->withCount('quizzes');
+            }, 'tags'])
                 ->where('status', 'published')
                 ->where('is_popular', true)
                 ->orderBy('created_at', 'desc')
@@ -143,7 +147,9 @@ class QuizController extends Controller
         $cacheKey = "api_quizzes_latest_{$limit}_{$locale}";
 
         $fetchData = function () use ($limit) {
-            $quizzes = Quiz::with(['category', 'tags'])
+            $quizzes = Quiz::with(['category' => function($q) {
+                $q->withCount('quizzes');
+            }, 'tags'])
                 ->where('status', 'published')
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
@@ -166,7 +172,9 @@ class QuizController extends Controller
      */
     public function show($idOrSlug)
     {
-        $query = Quiz::with(['category', 'tags', 'parts.questions'])
+        $query = Quiz::with(['category' => function($q) {
+            $q->withCount('quizzes');
+        }, 'tags', 'parts.questions'])
             ->where('status', 'published');
 
         // Check if ID (UUID length 36) or Slug

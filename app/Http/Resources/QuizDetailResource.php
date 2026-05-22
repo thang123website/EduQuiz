@@ -21,6 +21,7 @@ class QuizDetailResource extends JsonResource
             'is_popular' => $this->is_popular,
             'question_count' => $this->question_count,
             'total_points' => (float) $this->total_points,
+            'participants_count' => $this->attempts()->distinct('user_id')->count(),
             'category' => new QuizCategoryResource($this->whenLoaded('category')),
             'tags' => $this->whenLoaded('tags', function () {
                 return $this->tags->pluck('name');
